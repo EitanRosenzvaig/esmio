@@ -24,6 +24,7 @@ from ..core.utils.taxes import DEFAULT_TAX_RATE_NAME, apply_tax_to_price
 from ..discount.utils import calculate_discounted_price
 from ..seo.models import SeoModel
 
+from pdb import set_trace as bp
 
 class Category(MPTTModel, SeoModel):
     name = models.CharField(max_length=128)
@@ -99,6 +100,7 @@ class Product(SeoModel):
         ProductType, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField()
+    brand = models.TextField()
     category = models.ForeignKey(
         Category, related_name='products', on_delete=models.CASCADE)
     price = MoneyField(
