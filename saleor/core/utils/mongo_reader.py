@@ -10,4 +10,4 @@ class MongoReader():
 		return self.items.distinct("brand")
 
 	def get_all_products_from_brand(self, brand):
-		return self.items.aggregate([{"$match": {'brand':brand}},{"$sample":{'size':5}}])
+		return self.items.aggregate([{"$match": {'brand':brand}},{"$sample":{'size':10}}])

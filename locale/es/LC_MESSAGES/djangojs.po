@@ -358,7 +358,7 @@ msgctxt "Add to cart form field label"
 msgid "Quantity"
 msgstr "Cantidad"
 
-#: saleor/static/js/components/variantPicker/VariantPicker.js:166
+#: saleor/static/js/components/variantPicker/VariantPicker.js:161
 msgctxt "Product details primary action"
-msgid "Add to cart"
-msgstr "Agregar al carro"
+msgid "Buy"
+msgstr "Comprar"

@@ -62,6 +62,8 @@
     padding: $global-padding / 2 0;
     list-style: none;
     margin-bottom: 0;
+    overflow-y: scroll;
+    height: 10rem;
     li {
       padding-left: $global-padding;
       input {

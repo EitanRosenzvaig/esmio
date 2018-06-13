@@ -153,17 +153,12 @@ export default observer(class VariantPicker extends Component {
           />
         )}
         <div className="clearfix">
-          <QuantityInput
-            errors={errors.quantity}
-            handleChange={this.handleQuantityChange}
-            quantity={quantity}
-          />
           <div className="form-group product__info__button">
             <button
               className={addToCartBtnClasses}
               onClick={this.handleAddToCart}
               disabled={disableAddToCart}>
-              {pgettext('Product details primary action', 'Add to cart')}
+              {pgettext('Product details primary action', 'Buy')}
             </button>
           </div>
         </div>

@@ -98,7 +98,7 @@ class ProductQuerySet(models.QuerySet):
 class Product(SeoModel):
     product_type = models.ForeignKey(
         ProductType, related_name='products', on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=1050)
     description = models.TextField()
     brand = models.TextField()
     category = models.ForeignKey(

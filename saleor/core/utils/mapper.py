@@ -1,10 +1,10 @@
 TEXT_FIELDS = ['description', 'title', 'breadcrumb']
 CATEGORIES = {
-        'Botas y Botinetas': ['bota', 'botineta', 'borcego', 'abotinado'],
+        'Botas y Botinetas': ['bota', 'botineta', 'abotinado', 'base', 'borceg', 'texan', 'tejan'],
         'Sandalias y Ojotas': ['sandalia', 'ojota', 'chinela'],
         'Stilletos y Plataformas': ['stilleto', 'guillermina', 'plataforma'],
-        'Chatitas': ['chatita', 'balerina'],
-        'Mocasines y Vestir': ['mocasine', 'creeper', 'nautico', 'vestir', 'zapato', 'mocasin'],
+        'Chatitas': ['chatita', 'balerina', 'chata', 'ballerina'],
+        'Mocasines y Vestir': ['creeper', 'nautico', 'vestir', 'mocasin', 'noche', 'slip'],
         'Zuecos y Mules': ['zueco', 'mule'],
         'Casual': ['pantufla', 'alpargata', 'pancha'],
         'Zapatillas': ['zapatailla', 'urbana', 'running', 'botita', 'nautica']

@@ -115,6 +115,9 @@
       <h1 class="product__info__name">
         {{ product }}
       </h1>
+      <h3 class="product__info__name">
+        {{ product.brand }}
+      </h1>
       {% if user.is_staff %}
         <p>
           <a href="{% url "dashboard:product-details" pk=product.pk %}">
@@ -166,13 +169,13 @@
             <form id="product-form" role="form" class="product-form clearfix" method="post" action="{% url 'product:add-to-cart' product_id=product.pk slug=product.get_slug %}" novalidate>
               {% csrf_token %}
               {% bootstrap_field form.variant %}
-              <div class="product__info__quantity">
+              <!-- <div class="product__info__quantity">
                 {% bootstrap_field form.quantity %}
-              </div>
+              </div> -->
 
               <div class="form-group product__info__button">
                 <button class="btn primary">
-                  {% trans "Add to cart" context "Product details primary action" %}
+                  {% trans "Buy" context "Product details primary action" %}
                 </button>
               </div>
             </form>

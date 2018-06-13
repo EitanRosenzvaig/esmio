@@ -3,6 +3,7 @@ import os
 import random
 import unicodedata
 import urllib.request as req
+import urllib.parse as urlparse
 from socket import timeout
 
 from django.conf import settings
@@ -43,16 +44,16 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
 def full_mongo_import(placeholder_dir):
     mongo = MongoReader()
     brands = mongo.get_all_brands()
-    for brand in brands:
+    for brand in ['ancayco']:
         image_directory = os.path.join(placeholder_dir, brand)
         for item in mongo.get_all_products_from_brand(brand):
-            try:
+        # try:
+            if item['sizes']:
                 product, product_type = create_product(item)
-                if item['sizes']:
-                    for size in item['sizes']:
-                        if not '.' in size:
-                            size = size + '.0'
-                        create_size_variant(product, size)
+                for size in item['sizes']:
+                    if not '.' in size:
+                        size = size + '.0'
+                    create_size_variant(product, size)
                 if 'image_urls' in item and len(item['image_urls']) > 0:
                     if type(item['image_urls']) is list:
                         urls = item['image_urls']
@@ -63,8 +64,8 @@ def full_mongo_import(placeholder_dir):
                             product_image_url = 'http://' + product_image_url
                         create_product_image(product, image_directory, product_image_url)
                 yield 'Product Added'
-            except Exception as e:
-                yield 'Error adding product: ' + str(e)
+        # except Exception as e:
+        #     yield 'Error adding product: ' + str(e)
 
 
 def get_product_type(name):
@@ -78,23 +79,21 @@ def get_category_object(item):
 
 def create_product(item):
     print(item)
-    product_type = get_product_type(item['product_type'])
+    product_type = get_product_type('Calzado')
     brand = get_brand_name(product_type, item['brand'])
     category = get_category_object(item)
-    description = strip_html_and_truncate(item['description'], 1000) if item['description'] is not None else ''
-    name = strip_html_and_truncate(item['title'], 1000) if item['title'] is not None else ''
-    try:
-        price = Decimal(item['price'])
-    except:
-        price = '0.0'
+    description = item['description']
+    name = item['title']
+    price = Decimal(item['price'])
     defaults = {
         'product_type': product_type,
         'category': category,
         'name': name,
         'price': price,
         'brand': brand,
-        'description': '\n\n'.join(description),
-        'seo_description': description
+        'description': description,
+        'seo_description': description[:300],
+        'seo_title': name[:70]
         }
     return Product.objects.create(**defaults), product_type
 
@@ -134,6 +133,11 @@ def get_image(image_dir, url):
     image_name = str(hash(url)) + '.jpg'
     file_path = os.path.join(image_dir, image_name)
     f = open(file_path, 'wb')
+    # Fix wrongly encoded URL strings:
+    url = urlparse.urlsplit(url)
+    url = list(url)
+    url[2] = urlparse.quote(url[2])
+    url = urlparse.urlunsplit(url)
     try:
         request = req.Request(url, headers=HEADERS)
         f.write(req.urlopen(request, timeout=10).read())
