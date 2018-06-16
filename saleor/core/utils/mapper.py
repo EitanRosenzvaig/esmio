@@ -1,13 +1,16 @@
 TEXT_FIELDS = ['description', 'title', 'breadcrumb']
 CATEGORIES = {
-        'Botas y Botinetas': ['bota', 'botineta', 'abotinado', 'base', 'borceg', 'texan', 'tejan'],
-        'Sandalias y Ojotas': ['sandalia', 'ojota', 'chinela'],
-        'Stilletos y Plataformas': ['stilleto', 'guillermina', 'plataforma'],
-        'Chatitas': ['chatita', 'balerina', 'chata', 'ballerina'],
-        'Mocasines y Vestir': ['creeper', 'nautico', 'vestir', 'mocasin', 'noche', 'slip'],
-        'Zuecos y Mules': ['zueco', 'mule'],
-        'Casual': ['pantufla', 'alpargata', 'pancha'],
-        'Zapatillas': ['zapatailla', 'urbana', 'running', 'botita', 'nautica']
+        'Ballerinas': ['ballerina', 'slip','chatita', 'chata', 'balerina'],
+        'Borcegos': ['borceg'],
+        'Botas': ['bota', 'botinet', 'texan', 'tejan', 'abotina', 'botita', 'charrit', 'ankle-boots', 'botín'],
+        'Mocasines': ['casual', 'mocasin', 'oxford', 'acordonado', 'creeper'],
+        'Ojotas': ['ojot'],
+        'Panchas': ['pancha', 'alpargat', 'espadrill', 'chancla', 'pantuf'],
+        'Plataformas': ['plataformas'],
+        'Sandalias' : ['sandal', 'atanad', 'roman'],
+        'Zapatillas': ['zapatilla', 'urbana', 'sneak', 'nautic', 'runing'],
+        'Zapatos Y Stilettos': ['zapato', 'noche', 'taco', 'vestir', 'stillet', 'escotado', 'semi abierto', 'fajon'],
+        'Zuecos': ['zueco', 'mule']
 }
 
 
@@ -24,7 +27,7 @@ def flatten_text(item):
 # Simply choose category that has the most sub-category mentiones in item text
 def get_category(item):
     item_text = flatten_text(item)
-    max_cat = 'Botas y Botinetas'
+    max_cat = 'Zapatos'
     max_cat_match = 0
     for cat, sub_cats in CATEGORIES.items():
         cat_match = item_text.count(cat.lower())
