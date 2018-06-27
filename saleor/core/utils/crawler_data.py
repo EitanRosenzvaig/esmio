@@ -44,7 +44,7 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
 def full_mongo_import(placeholder_dir):
     mongo = MongoReader()
     brands = mongo.get_all_brands()
-    for brand in ['ancayco']:
+    for brand in brands:
         image_directory = os.path.join(placeholder_dir, brand)
         for item in mongo.get_all_products_from_brand(brand):
         # try:
@@ -84,6 +84,7 @@ def create_product(item):
     category = get_category_object(item)
     description = item['description']
     name = item['title']
+    vendorUrl = item['url']
     price = Decimal(item['price'])
     defaults = {
         'product_type': product_type,
@@ -91,6 +92,7 @@ def create_product(item):
         'name': name,
         'price': price,
         'brand': brand,
+        'vendorUrl': vendorUrl,
         'description': description,
         'seo_description': description[:300],
         'seo_title': name[:70]

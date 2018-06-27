@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import F, Max
+from django.utils.timezone import now
 
 
 class BaseNote(models.Model):
@@ -37,3 +38,14 @@ class SortableModel(models.Model):
         qs.filter(sort_order__gt=self.sort_order).update(
             sort_order=F('sort_order') - 1)
         super().delete(*args, **kwargs)
+
+
+class Event(models.Model):
+    url = models.TextField(blank=False)
+    referrer = models.TextField(blank=True)
+    created_at = models.DateTimeField(
+        default=now, editable=False)
+    session_id = models.CharField(max_length=10, blank=True)
+    user_agent = models.TextField(blank=True)
+    query_string = models.TextField(blank=True)
+    # data = models.JSONField()

@@ -7,6 +7,7 @@ from django.utils.translation import get_language
 from django_countries.fields import Country
 
 from . import analytics
+from . import tracking
 from ..discount.models import Sale
 from .utils import get_client_ip, get_country_by_ip, get_currency_for_country
 from .utils.taxes import get_taxes_for_country
@@ -26,6 +27,21 @@ def google_analytics(get_response):
                 client_id, path=path, language=language, headers=headers)
         except Exception:
             logger.exception('Unable to update analytics')
+        return get_response(request)
+    return middleware
+
+
+def tracking_system(get_response):
+    """Report a page view to Tracking system."""
+    def middleware(request):
+        session_id = tracking.get_session_id(request)
+        path = request.path
+        headers = request.META
+        try:
+            if tracking.is_trackable(path):
+                tracking.report_event(session_id, path, headers)
+        except Exception:
+            logger.exception('Unable to update tracking system')
         return get_response(request)
     return middleware
 

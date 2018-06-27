@@ -5549,6 +5549,11 @@ msgctxt "Filter heading title"
 msgid "Filters"
 msgstr "Filtros"
 
+#: templates/product/_filters.html:53
+msgctxt "Filter header"
+msgid "Price"
+msgstr "Precio"
+
 #: templates/product/_filters.html:17
 msgctxt "Product list page filters"
 msgid "Clear filters"

@@ -12,8 +12,10 @@ export default observer(class VariantPicker extends Component {
   static propTypes = {
     onAddToCartError: PropTypes.func.isRequired,
     onAddToCartSuccess: PropTypes.func.isRequired,
+    openProductAtVendor: PropTypes.func.isRequired,
     store: PropTypes.object.isRequired,
     url: PropTypes.string.isRequired,
+    vendorUrl: PropTypes.string.isRequired,
     variantAttributes: PropTypes.array.isRequired,
     variants: PropTypes.array.isRequired
   };
@@ -55,26 +57,32 @@ export default observer(class VariantPicker extends Component {
     const { store } = this.props;
     return store.variant.availability;
   };
+  
+  openProductAtVendor = () => {
+    const { vendorUrl } = this.props;
+    var win = window.open(vendorUrl, '_blank');
+    win.focus();
+  }
 
   handleAddToCart = () => {
-    const { onAddToCartSuccess, onAddToCartError, store } = this.props;
+    const { onAddToCartSuccess, onAddToCartError, store, url } = this.props;
     const { quantity } = this.state;
-    if (quantity > 0 && !store.isEmpty) {
-      $.ajax({
-        url: this.props.url,
-        method: 'post',
-        data: {
-          quantity: quantity,
-          variant: store.variant.id
-        },
-        success: () => {
-          onAddToCartSuccess();
-        },
-        error: (response) => {
-          onAddToCartError(response);
-        }
-      });
-    }
+    $.ajax({
+      url: url,
+      method: 'post',
+      data: {
+        // quantity: quantity, We are only sending to website
+        quantity: 0,
+        variant: store.variant.id
+      },
+      success: () => {
+        // onAddToCartSuccess();
+        this.openProductAtVendor();
+      },
+      error: (response) => {
+        onAddToCartError(response);
+      }
+    });
   };
 
   handleAttributeChange = (attrId, valueId) => {

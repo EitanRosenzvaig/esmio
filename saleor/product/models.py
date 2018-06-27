@@ -101,6 +101,7 @@ class Product(SeoModel):
     name = models.CharField(max_length=1050)
     description = models.TextField()
     brand = models.TextField()
+    vendorUrl = models.TextField()
     category = models.ForeignKey(
         Category, related_name='products', on_delete=models.CASCADE)
     price = MoneyField(
@@ -151,6 +152,9 @@ class Product(SeoModel):
 
     def get_slug(self):
         return slugify(smart_text(unidecode(self.name)))
+
+    def get_vendorUrl(self):
+        return self.vendorUrl
 
     def is_in_stock(self):
         return any(variant.is_in_stock() for variant in self)

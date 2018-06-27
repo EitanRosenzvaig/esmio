@@ -6,7 +6,7 @@
 {% load placeholder %}
 {% load translate_url from urls %}
 
-<html lang="{{ LANGUAGE_CODE }}" class="no-js" data-shipping-options-url="{% url 'cart:shipping-options' %}" data-cart-summary-url="{% url 'cart:cart-summary' %}">
+<html lang="{{ LANGUAGE_CODE }}" class="no-js">
 <head>
   <title>{% block title %}{{ site.name }}{% endblock %}</title>
   {% block meta %}
@@ -47,7 +47,8 @@
 <body>
 {% block header %}
   <header class="navbar" role="navigation">
-    <div class="navbar__login container-fluid {% if user.is_impersonate %} bg-warning{% endif %}">
+    <!-- Login disabled for MVP -->
+    <!-- <div class="navbar__login container-fluid {% if user.is_impersonate %} bg-warning{% endif %}">
       <div class=" d-none d-md-block container">
       <div class="row">
         <div class="col-6">
@@ -94,7 +95,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
     </div>
     <div class="navbar__brand container-fluid d-block">
       <div class="container">
@@ -166,11 +167,6 @@
         </div>
         <div class="col-md-3 col-sm-6">
           <ul>
-            <li>
-              <a rel="nofollow" href="{% url "cart:index" %}">
-                {% trans "Your Cart" context "Main navigation item" %}
-              </a>
-            </li>
             {% if user.is_authenticated %}
               {% if user.is_staff %}
                 <li>

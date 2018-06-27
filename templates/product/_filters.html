@@ -50,7 +50,7 @@
           {% if field.name == 'price' %}
             <div class="filter-section" aria-expanded="true">
               <div class="filter-section__header">
-                <h3>{{ field.label }}</h3>
+                <h3>{% trans 'Price' context 'Filter header' %}</h3>
                 <div class="filter-section__icon">
                   <img class="lazyload lazypreload" data-src="{% static "images/chevron-up.svg" %}">
                 </div>

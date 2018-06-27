@@ -19,6 +19,7 @@ export default $(document).ready((e) => {
         onAddToCartSuccess={onAddToCartSuccess}
         store={variantPickerStore}
         url={variantPickerContainer.dataset.action}
+        vendorUrl={variantPickerContainer.dataset.vendor}
         variantAttributes={variantPickerData.variantAttributes}
         variants={variantPickerData.variants}
       />,
