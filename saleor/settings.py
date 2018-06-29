@@ -142,6 +142,7 @@ MIDDLEWARE = [
     'graphql_jwt.middleware.JSONWebTokenMiddleware',
     'saleor.core.middleware.discounts',
     'saleor.core.middleware.google_analytics',
+    'saleor.core.middleware.tracking_session',
     'saleor.core.middleware.tracking_system',
     'saleor.core.middleware.country',
     'saleor.core.middleware.currency',
@@ -458,5 +459,3 @@ ALLOWED_STYLES = ['text-align']
 DEFAULT_MENUS = {
     'top_menu_name': 'navbar',
     'bottom_menu_name': 'footer'}
-
-SESSION_COOKIE_AGE = 52560000

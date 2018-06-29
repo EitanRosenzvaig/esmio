@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from django.utils.functional import SimpleLazyObject
 from django.utils.translation import get_language
 from django_countries.fields import Country
+from django.utils.crypto import get_random_string
 
 from . import analytics
 from . import tracking
@@ -32,7 +33,6 @@ def google_analytics(get_response):
 
 
 def tracking_system(get_response):
-    """Report a page view to Tracking system."""
     def middleware(request):
         session_id = tracking.get_session_id(request)
         path = request.path
@@ -42,6 +42,20 @@ def tracking_system(get_response):
                 tracking.report_event(session_id, path, headers)
         except Exception:
             logger.exception('Unable to update tracking system')
+        return get_response(request)
+    return middleware
+
+
+def tracking_session(get_response):
+    def middleware(request):
+        try:
+            if request.COOKIES.get('visitor_id', '') == '':
+                visitor_id = get_random_string(length=38)
+                response = get_response(request)
+                response.set_cookie('visitor_id', visitor_id, max_age=52560000)
+                return response
+        except Exception:
+            logger.exception('Unable to set visitor_id')
         return get_response(request)
     return middleware
 

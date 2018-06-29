@@ -2,7 +2,7 @@ from django.conf import settings
 
 from .models import Event
 
-SESSION_ID = 'sessionid'
+VISITOR_COOKIE_KEY = 'visitor_id'
 DONT_TRACK = ['/media/', '/jsi18n/', '/static/']
 
 def is_trackable(url):
@@ -13,15 +13,15 @@ def is_trackable(url):
 
 
 def get_session_id(request):
-    return request.COOKIES.get(SESSION_ID, '')
+    return request.COOKIES.get(VISITOR_COOKIE_KEY, '')
 
 
-def report_event(session_id, url, headers):
+def report_event(visitor_id, url, headers):
     referrer = headers.get('HTTP_REFERER', None)
     user_agent = headers.get('HTTP_USER_AGENT', None)
     query_string = headers.get('QUERY_STRING', None)
     defaults = {
-        'session_id': session_id,
+        'visitor_id': visitor_id,
         'url': url,
         'referrer': referrer,
         'user_agent': user_agent,

@@ -45,7 +45,7 @@ class Event(models.Model):
     referrer = models.TextField(blank=True)
     created_at = models.DateTimeField(
         default=now, editable=False)
-    session_id = models.CharField(max_length=10, blank=True)
+    visitor_id = models.CharField(max_length=38, blank=True)
     user_agent = models.TextField(blank=True)
     query_string = models.TextField(blank=True)
     # data = models.JSONField()
