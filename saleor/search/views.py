@@ -7,7 +7,6 @@ from ..product.utils import products_with_details
 from ..product.utils.availability import products_with_availability
 from .forms import SearchForm
 
-
 def paginate_results(results, get_data, paginate_by=settings.PAGINATE_BY):
     paginator = Paginator(results, paginate_by)
     page_number = get_data.get('page', 1)
@@ -34,7 +33,9 @@ def search(request):
         results = evaluate_search_query(form, request)
     else:
         query, results = '', []
-    page = paginate_results(list(results), request.GET)
+    results = list(results)
+    page = paginate_results(results, request.GET)
+    request.META['HTTP_PRODUCTS'] = results
     ctx = {
         'query': query,
         'results': page,

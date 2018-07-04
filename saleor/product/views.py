@@ -18,7 +18,6 @@ from .utils.attributes import get_product_attributes_data
 from .utils.availability import get_availability
 from .utils.variants_picker import get_variant_picker_data
 
-
 def product_details(request, slug, product_id, form=None):
     """Product details page.
 
@@ -83,6 +82,16 @@ def product_details(request, slug, product_id, form=None):
     return TemplateResponse(request, 'product/details.html', ctx)
 
 
+def product_heart(request, slug, product_id):
+
+    if not request.method == 'POST':
+        return redirect(reverse(
+            'product:details',
+            kwargs={'product_id': product_id, 'slug': slug}))
+    response = JsonResponse({'ok': 1}, status=200)
+    return response
+
+
 def product_add_to_cart(request, slug, product_id):
     # types: (int, str, dict) -> None
 
@@ -120,10 +129,11 @@ def category_index(request, path, category_id):
     # Check for subcategories
     categories = category.get_descendants(include_self=True)
     products = products_with_details(user=request.user).filter(
-        category__in=categories).order_by('name')
+        category__in=categories)
     product_filter = ProductCategoryFilter(
         request.GET, queryset=products, category=category)
     ctx = get_product_list_context(request, product_filter)
+    request.META['HTTP_PRODUCTS'] = ctx['products']
     ctx.update({'object': category})
     return TemplateResponse(request, 'category/index.html', ctx)
 

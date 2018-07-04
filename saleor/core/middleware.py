@@ -12,7 +12,7 @@ from . import tracking
 from ..discount.models import Sale
 from .utils import get_client_ip, get_country_by_ip, get_currency_for_country
 from .utils.taxes import get_taxes_for_country
-
+from pdb import set_trace as bp
 logger = logging.getLogger(__name__)
 
 
@@ -37,9 +37,13 @@ def tracking_system(get_response):
         session_id = tracking.get_session_id(request)
         path = request.path
         headers = request.META
+        products = []
+        response = get_response(request)
         try:
             if tracking.is_trackable(path):
-                tracking.report_event(session_id, path, headers)
+                if 'HTTP_PRODUCTS' in headers:
+                    products = tracking.get_product_pks(headers['HTTP_PRODUCTS'])
+                tracking.report_event(session_id, path, headers, products)
         except Exception:
             logger.exception('Unable to update tracking system')
         return get_response(request)

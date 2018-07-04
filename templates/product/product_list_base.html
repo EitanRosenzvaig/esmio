@@ -125,6 +125,9 @@
         <div>
           <div>
             {% if products %}
+              <!-- <div class="row">
+                   <div id="mio-filter" data-url={{ object.get_mio_url }}></div>
+              </div> -->
               <div class="row">
                 {% include "_items.html" with products=products %}
               </div>

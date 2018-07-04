@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import F, Max
 from django.utils.timezone import now
+from django.contrib.postgres.fields import ArrayField
 
 
 class BaseNote(models.Model):
@@ -48,4 +49,5 @@ class Event(models.Model):
     visitor_id = models.CharField(max_length=38, blank=True)
     user_agent = models.TextField(blank=True)
     query_string = models.TextField(blank=True)
+    products = ArrayField(models.IntegerField(), blank=True)
     # data = models.JSONField()

@@ -16,7 +16,14 @@ def get_session_id(request):
     return request.COOKIES.get(VISITOR_COOKIE_KEY, '')
 
 
-def report_event(visitor_id, url, headers):
+def get_product_pks(products):
+    if isinstance(products, (list,)):
+        return [x[0].pk for x in products]
+    else:
+        return [products]
+
+
+def report_event(visitor_id, url, headers, products=None):
     referrer = headers.get('HTTP_REFERER', None)
     user_agent = headers.get('HTTP_USER_AGENT', None)
     query_string = headers.get('QUERY_STRING', None)
@@ -25,6 +32,7 @@ def report_event(visitor_id, url, headers):
         'url': url,
         'referrer': referrer,
         'user_agent': user_agent,
-        'query_string': query_string
+        'query_string': query_string,
+        'products': products
     }
     Event.objects.create(**defaults)

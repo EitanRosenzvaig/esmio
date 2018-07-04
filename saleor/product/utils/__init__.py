@@ -10,6 +10,8 @@ from ...core.utils import get_paginator_items
 from ...core.utils.filters import get_now_sorted_by
 from ..forms import ProductForm
 from .availability import products_with_availability
+from random import shuffle
+from pdb import set_trace as bp
 
 
 def products_visible_to_user(user):

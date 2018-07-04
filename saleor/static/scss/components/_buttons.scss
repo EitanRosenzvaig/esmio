@@ -1,6 +1,11 @@
 a.btn {
   display: inline-block;
 }
+.heart {
+  background-color:transparent; 
+  border: none; 
+  float: right;
+}
 .btn {
   transition: 0.3s;
   border-radius: $button-border-radius;

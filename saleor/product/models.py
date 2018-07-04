@@ -24,7 +24,6 @@ from ..core.utils.taxes import DEFAULT_TAX_RATE_NAME, apply_tax_to_price
 from ..discount.utils import calculate_discounted_price
 from ..seo.models import SeoModel
 
-from pdb import set_trace as bp
 
 class Category(MPTTModel, SeoModel):
     name = models.CharField(max_length=128)
@@ -52,6 +51,11 @@ class Category(MPTTModel, SeoModel):
 
     def get_absolute_url(self, ancestors=None):
         return reverse('product:category',
+                       kwargs={'path': self.get_full_path(ancestors),
+                               'category_id': self.id})
+
+    def get_mio_url(self, ancestors=None):
+        return reverse('product:category_mio',
                        kwargs={'path': self.get_full_path(ancestors),
                                'category_id': self.id})
 
@@ -85,6 +89,8 @@ class ProductType(models.Model):
         class_ = type(self)
         return '<%s.%s(pk=%r, name=%r)>' % (
             class_.__module__, class_.__name__, self.pk, self.name)
+
+
 
 
 class ProductQuerySet(models.QuerySet):
@@ -155,6 +161,11 @@ class Product(SeoModel):
 
     def get_vendorUrl(self):
         return self.vendorUrl
+
+    def get_heart_url(self):
+        return reverse(
+            'product:heart',
+            kwargs={'slug': self.get_slug(), 'product_id': self.id})
 
     def is_in_stock(self):
         return any(variant.is_in_stock() for variant in self)

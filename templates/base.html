@@ -37,7 +37,7 @@
   {% endblock meta_tags %}
 
   <link rel="manifest" href="{% url "manifest" %}" />
-
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -106,7 +106,7 @@
               <span>{% trans "menu" context "Hamburger button text" %}</span>
             </div>
             <a href="{% url 'home' %}">
-              <svg data-src="{% static "images/logo.png" %}" height="38px" width="176px"/>
+              <svg data-src="{% static "images/logo.svg" %}" height="68px" width="226px"/>
             </a>
           </div>
           <div class="col-2 col-md-4 navbar__search static">
@@ -159,10 +159,10 @@
       <div class="row">
         <div class="col-md-3">
           <a href="{% url 'home' %}" class="footer__logo">
-            <svg data-src="{% static "images/logo.svg" %}" height="38px" width="176px"/>
+            <svg data-src="{% static "images/logo.svg" %}" height="68px" width="226px"/>
           </a>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <!-- <div class="col-md-3 col-sm-6">
           {% menu site_menu=site.settings.bottom_menu %}
         </div>
         <div class="col-md-3 col-sm-6">
@@ -237,7 +237,7 @@
             <svg data-src="{% static "images/instagram-logo.svg" %}" width="45px" height="45px"/>
           </a>
         </div>
-      </div>
+      </div> -->
     </div>
   </footer>
 {% endblock %}
