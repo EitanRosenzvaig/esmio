@@ -108,7 +108,8 @@
 
 {% block topcontent %}
   {% if object.background_image %}
-    <div class="row" id="product-list-image" style="background-image: url('{{ object.background_image.url }}')"></div>
+<!--     <div class="row" id="product-list-image" style="background-image: url('{{ object.background_image.url }}')"></div> -->
+    <div class="row" id="product-list-image" style="background-image: url('{% static "images/logo_banner.png" %}')"></div>
   {% endif %}
 {% endblock topcontent %}
 

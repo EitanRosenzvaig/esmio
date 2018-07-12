@@ -45,6 +45,11 @@
           </div>
         {% endif %}
       </div>
+      <div style="padding-top: 5px">
+        <a href="{{ product.get_similar }}?{{ request.GET.urlencode }}" class="link--clean">
+          <i class="fa fa-search-plus"></i> Mas como este
+        </a>
+      </div>
     </div>
 </div>
 {% endfor %}

@@ -33,6 +33,9 @@ from decimal import Decimal
 # For debugg mode
 from pdb import set_trace as bp
 from bs4 import BeautifulSoup
+from random import shuffle
+
+NA_IMAGE_PATH = r'saleor/static/placeholders/na_image.png'
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -44,6 +47,7 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
 def full_mongo_import(placeholder_dir):
     mongo = MongoReader()
     brands = mongo.get_all_brands()
+    shuffle(brands)
     for brand in brands:
         image_directory = os.path.join(placeholder_dir, brand)
         for item in mongo.get_all_products_from_brand(brand):
@@ -74,6 +78,7 @@ def get_product_type(name):
 
 def get_category_object(item):
     name = get_category(item)
+    print(name)
     return Category.objects.filter(name=name)[0]
 
 
@@ -84,7 +89,7 @@ def create_product(item):
     category = get_category_object(item)
     description = item['description']
     name = item['title']
-    vendorUrl = item['url']
+    vendor_url = item['url']
     price = Decimal(item['price'])
     defaults = {
         'product_type': product_type,
@@ -92,7 +97,7 @@ def create_product(item):
         'name': name,
         'price': price,
         'brand': brand,
-        'vendorUrl': vendorUrl,
+        'vendor_url': vendor_url,
         'description': description,
         'seo_description': description[:300],
         'seo_title': name[:70]
@@ -134,18 +139,22 @@ def create_product_image(product, placeholder_dir, url):
 def get_image(image_dir, url):
     image_name = str(hash(url)) + '.jpg'
     file_path = os.path.join(image_dir, image_name)
-    f = open(file_path, 'wb')
-    # Fix wrongly encoded URL strings:
-    url = urlparse.urlsplit(url)
-    url = list(url)
-    url[2] = urlparse.quote(url[2])
-    url = urlparse.urlunsplit(url)
-    try:
-        request = req.Request(url, headers=HEADERS)
-        f.write(req.urlopen(request, timeout=10).read())
-    except timeout:
-        print('socket timed out - URL %s', url)
-        raise
-    f.close()
+    if not os.path.isfile(file_path):
+        f = open(file_path, 'wb')
+        # Fix wrongly encoded URL strings:
+        url = urlparse.urlsplit(url)
+        url = list(url)
+        url[2] = urlparse.quote(url[2])
+        url = urlparse.urlunsplit(url)
+        try:
+            request = req.Request(url, headers=HEADERS)
+            f.write(req.urlopen(request, timeout=10).read())
+        except timeout:
+            print('socket timed out - URL %s', url)
+            file_path = NA_IMAGE_PATH
+        except:
+            print('get image error')
+            file_path = NA_IMAGE_PATH
+        f.close()
 
     return File(open(file_path, 'rb'))

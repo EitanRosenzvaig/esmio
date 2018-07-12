@@ -22,8 +22,18 @@ def products_visible_to_user(user):
     return Product.objects.available_products()
 
 
-def products_with_details(user):
+def products_similar_to(product_id):
+    # pylint: disable=cyclic-import
+    from ..models import ProductSimilarity
+    return ProductSimilarity.objects.get(product_id=product_id)
+
+
+def products_with_details(user, product_id=None):
     products = products_visible_to_user(user)
+    if product_id is not None:
+        product_similarity = products_similar_to(product_id)
+        similar_products = product_similarity.get_similar_products()
+        products = products.filter(pk__in=similar_products)
     products = products.prefetch_related(
         'category', 'images', 'variants__variant_images__image',
         'attributes__values', 'product_type__product_attributes__values')

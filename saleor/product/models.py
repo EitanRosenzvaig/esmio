@@ -17,6 +17,7 @@ from mptt.models import MPTTModel
 from prices import TaxedMoneyRange
 from text_unidecode import unidecode
 from versatileimagefield.fields import PPOIField, VersatileImageField
+from django.contrib.postgres.fields import ArrayField
 
 from ..core.exceptions import InsufficientStock
 from ..core.models import SortableModel
@@ -91,8 +92,6 @@ class ProductType(models.Model):
             class_.__module__, class_.__name__, self.pk, self.name)
 
 
-
-
 class ProductQuerySet(models.QuerySet):
     def available_products(self):
         today = datetime.date.today()
@@ -107,7 +106,7 @@ class Product(SeoModel):
     name = models.CharField(max_length=1050)
     description = models.TextField()
     brand = models.TextField()
-    vendorUrl = models.TextField()
+    vendor_url = models.TextField()
     category = models.ForeignKey(
         Category, related_name='products', on_delete=models.CASCADE)
     price = MoneyField(
@@ -159,13 +158,18 @@ class Product(SeoModel):
     def get_slug(self):
         return slugify(smart_text(unidecode(self.name)))
 
-    def get_vendorUrl(self):
-        return self.vendorUrl
+    def get_vendor_url(self):
+        return self.vendor_url
 
     def get_heart_url(self):
         return reverse(
             'product:heart',
             kwargs={'slug': self.get_slug(), 'product_id': self.id})
+
+    def get_similar(self):
+        return reverse(
+            'product:similar',
+            kwargs={'product_id': self.id, 'category_id': self.category.pk})
 
     def is_in_stock(self):
         return any(variant.is_in_stock() for variant in self)
@@ -190,6 +194,27 @@ class Product(SeoModel):
         tax_rate = self.tax_rate or self.product_type.tax_rate
         price = apply_tax_to_price(taxes, tax_rate, price)
         return TaxedMoneyRange(start=price, stop=price)
+
+
+class ProductSimilarity(models.Model):
+    product = models.ForeignKey(
+        Product, related_name='similar', on_delete=models.CASCADE)
+    similar_products = ArrayField(models.IntegerField(), blank=True)
+
+
+    class Meta:
+        app_label = 'product'
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        class_ = type(self)
+        return '<%s.%s(pk=%r, name=%r)>' % (
+            class_.__module__, class_.__name__, self.pk, self.name)
+
+    def get_similar_products(self):
+        return self.similar_products
 
 
 class ProductVariant(models.Model):

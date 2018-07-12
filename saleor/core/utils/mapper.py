@@ -1,12 +1,12 @@
 TEXT_FIELDS = ['description', 'title', 'breadcrumb']
 CATEGORIES = {
         'Ballerinas': ['ballerina', 'slip','chatita', 'chata', 'balerina'],
-        'Borcegos': ['borceg'],
+        'Borcegos': ['borceg','acordonado'],
         'Botas': ['bota', 'botinet', 'texan', 'tejan', 'abotina', 'botita', 'charrit', 'ankle-boots', 'botín'],
         'Mocasines': ['casual', 'mocasin', 'oxford', 'acordonado', 'creeper'],
         'Ojotas': ['ojot'],
         'Panchas': ['pancha', 'alpargat', 'espadrill', 'chancla', 'pantuf'],
-        'Plataformas': ['plataformas'],
+        'Plataformas': ['plataformas', 'plataforma'],
         'Sandalias' : ['sandal', 'atanad', 'roman'],
         'Zapatillas': ['zapatilla', 'urbana', 'sneak', 'nautic', 'runing'],
         'Zapatos Y Stilettos': ['zapato', 'noche', 'taco', 'vestir', 'stillet', 'escotado', 'semi abierto', 'fajon'],
@@ -27,7 +27,7 @@ def flatten_text(item):
 # Simply choose category that has the most sub-category mentiones in item text
 def get_category(item):
     item_text = flatten_text(item)
-    max_cat = 'Zapatos'
+    max_cat = 'Zapatos Y Stilettos'
     max_cat_match = 0
     for cat, sub_cats in CATEGORIES.items():
         cat_match = item_text.count(cat.lower())

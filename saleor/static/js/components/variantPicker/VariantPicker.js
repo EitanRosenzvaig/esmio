@@ -15,7 +15,7 @@ export default observer(class VariantPicker extends Component {
     openProductAtVendor: PropTypes.func.isRequired,
     store: PropTypes.object.isRequired,
     url: PropTypes.string.isRequired,
-    vendorUrl: PropTypes.string.isRequired,
+    vendor_url: PropTypes.string.isRequired,
     variantAttributes: PropTypes.array.isRequired,
     variants: PropTypes.array.isRequired
   };
@@ -59,8 +59,8 @@ export default observer(class VariantPicker extends Component {
   };
   
   openProductAtVendor = () => {
-    const { vendorUrl } = this.props;
-    var win = window.open(vendorUrl, '_blank');
+    const { vendor_url } = this.props;
+    var win = window.open(vendor_url, '_blank');
     win.focus();
   }
 
