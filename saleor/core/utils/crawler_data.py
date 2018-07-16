@@ -1,7 +1,4 @@
-import itertools
 import os
-import random
-import unicodedata
 import urllib.request as req
 import urllib.parse as urlparse
 from socket import timeout
@@ -32,7 +29,6 @@ from decimal import Decimal
 
 # For debugg mode
 from pdb import set_trace as bp
-from bs4 import BeautifulSoup
 from random import shuffle
 
 NA_IMAGE_PATH = r'saleor/static/placeholders/na_image.png'
@@ -44,32 +40,60 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
        'Accept-Language': 'en-US,en;q=0.8',
        'Connection': 'keep-alive'}
 
+BRAND_REORDER = {
+               'sofimartire': [2,0,1,3,4],
+               'viauno': [2,0,1,3,4],
+               'benditopie': [1,0,2],
+               'clarabarcelo': [2,0,1,3,4],
+               'heyas': [2,0,1,3,4]
+                }
+
+def sort_by_site_generic_order(urls, brand):
+    if brand in BRAND_REORDER:
+        order = BRAND_REORDER[brand]
+        result = []
+        for i in range(min(len(urls),len(order))):
+            result.append(urls[order[i]])
+        return result
+    else:
+        return urls
+
+
+def save_for_similarity(image_directory, url):
+    similarity_directory = os.path.join(image_directory, 'similarity')
+    if not os.path.exists(similarity_directory):
+        os.makedirs(similarity_directory)
+    image = generate_image(similarity_directory, url)
+
+
 def full_mongo_import(placeholder_dir):
     mongo = MongoReader()
-    brands = mongo.get_all_brands()
+    # brands = mongo.get_all_brands()
+    brands = ['prune', 'sofimartire', 'viauno']
     shuffle(brands)
     for brand in brands:
         image_directory = os.path.join(placeholder_dir, brand)
         for item in mongo.get_all_products_from_brand(brand):
-        # try:
-            if item['sizes']:
-                product, product_type = create_product(item)
-                for size in item['sizes']:
-                    if not '.' in size:
-                        size = size + '.0'
-                    create_size_variant(product, size)
-                if 'image_urls' in item and len(item['image_urls']) > 0:
+            try:
+                if item['sizes'] and len(item['image_urls']) > 0:
+                    product, product_type = create_product(item)
+                    for size in item['sizes']:
+                        if not '.' in size:
+                            size = size + '.0'
+                        create_size_variant(product, size)
                     if type(item['image_urls']) is list:
                         urls = item['image_urls']
+                        urls = sort_by_site_generic_order(urls, brand)
                     else:
                         urls = [item['image_urls']]
+                    save_for_similarity(image_directory, urls[0])
                     for product_image_url in urls:
                         if not product_image_url.startswith('http'):
                             product_image_url = 'http://' + product_image_url
                         create_product_image(product, image_directory, product_image_url)
                 yield 'Product Added'
-        # except Exception as e:
-        #     yield 'Error adding product: ' + str(e)
+            except Exception as e:
+                yield 'Error adding product: ' + str(e)
 
 
 def get_product_type(name):
@@ -129,14 +153,14 @@ def create_size_variant(product, size):
 
 
 def create_product_image(product, placeholder_dir, url):
-    image = get_image(placeholder_dir, url)
+    image = generate_image(placeholder_dir, url)
     product_image = ProductImage(product=product, image=image)
     product_image.save()
     create_product_thumbnails.delay(product_image.pk)
     return product_image
 
 
-def get_image(image_dir, url):
+def generate_image(image_dir, url):
     image_name = str(hash(url)) + '.jpg'
     file_path = os.path.join(image_dir, image_name)
     if not os.path.isfile(file_path):
