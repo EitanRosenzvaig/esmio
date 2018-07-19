@@ -68,8 +68,7 @@ def save_for_similarity(image_directory, url):
 
 def full_mongo_import(placeholder_dir):
     mongo = MongoReader()
-    # brands = mongo.get_all_brands()
-    brands = ['prune', 'sofimartire', 'viauno']
+    brands = mongo.get_all_brands()
     shuffle(brands)
     for brand in brands:
         image_directory = os.path.join(placeholder_dir, brand)
@@ -88,8 +87,6 @@ def full_mongo_import(placeholder_dir):
                         urls = [item['image_urls']]
                     save_for_similarity(image_directory, urls[0])
                     for product_image_url in urls:
-                        if not product_image_url.startswith('http'):
-                            product_image_url = 'http://' + product_image_url
                         create_product_image(product, image_directory, product_image_url)
                 yield 'Product Added'
             except Exception as e:
@@ -166,6 +163,8 @@ def generate_image(image_dir, url):
     if not os.path.isfile(file_path):
         f = open(file_path, 'wb')
         # Fix wrongly encoded URL strings:
+        if not url.startswith('http'):
+            url = 'https://' + url
         url = urlparse.urlsplit(url)
         url = list(url)
         url[2] = urlparse.quote(url[2])

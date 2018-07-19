@@ -3,14 +3,14 @@ CATEGORIES = {
         'Ballerinas': ['ballerina', 'slip','chatita', 'chata', 'balerina'],
         'Borcegos': ['borceg','acordonado'],
         'Botas': ['bota', 'botinet', 'texan', 'tejan', 'abotina', 'botita', 'charrit', 'ankle-boots', 'botín'],
-        'Mocasines': ['casual', 'mocasin', 'oxford', 'acordonado', 'creeper'],
+        'Mocasines': ['casual', 'mocasin', 'oxford', 'acordonado', 'creeper', 'flat'],
         'Ojotas': ['ojot'],
         'Panchas': ['pancha', 'alpargat', 'espadrill', 'chancla', 'pantuf'],
         'Plataformas': ['plataformas', 'plataforma'],
         'Sandalias' : ['sandal', 'atanad', 'roman'],
         'Zapatillas': ['zapatilla', 'urbana', 'sneak', 'nautic', 'runing'],
         'Zapatos Y Stilettos': ['zapato', 'noche', 'taco', 'vestir', 'stillet', 'escotado', 'semi abierto', 'fajon'],
-        'Zuecos': ['zueco', 'mule']
+        'Zuecos': ['zueco', 'mule', 'sueco', 'taco chino']
 }
 
 
