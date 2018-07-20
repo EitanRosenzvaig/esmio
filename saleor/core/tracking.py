@@ -3,7 +3,7 @@ from django.conf import settings
 from .models import Event
 
 VISITOR_COOKIE_KEY = 'visitor_id'
-DONT_TRACK = ['/media/', '/jsi18n/', '/static/']
+DONT_TRACK = ['/media/', '/jsi18n/', '/static/', '/favicon']
 
 def is_trackable(url):
     for path in DONT_TRACK:
