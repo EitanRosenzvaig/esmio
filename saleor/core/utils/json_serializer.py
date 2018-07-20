@@ -23,10 +23,8 @@ class Deserializer(stream_or_string, **options):
     if isinstance(stream_or_string, bytes):
         stream_or_string = stream_or_string.decode()
     try:
-        objects = json.loads(stream_or_string)
-        yield from PythonDeserializer(objects, **options)
-    except (GeneratorExit, DeserializationError):
-        raise
+    	splitted = stream_or_string.split(' ')
+        return(Money(float(splitted[0]), splitted[1]))
     except Exception as exc:
         raise DeserializationError() from exc    
 
