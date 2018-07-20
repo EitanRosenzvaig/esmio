@@ -16,15 +16,15 @@ class Serializer(JsonSerializer):
         self.json_kwargs['cls'] = CustomJsonEncoder
 
 
-class Deserializer(stream_or_string, **options):
+def Deserializer(stream_or_string, **options):
     """Deserialize a stream or string of JSON data."""
     if not isinstance(stream_or_string, (bytes, str)):
         stream_or_string = stream_or_string.read()
     if isinstance(stream_or_string, bytes):
         stream_or_string = stream_or_string.decode()
     try:
-    	splitted = stream_or_string.split(' ')
-        return(Money(float(splitted[0]), splitted[1]))
+        objects = json.loads(stream_or_string)
+        yield from PythonDeserializer(objects, **options)
     except Exception as exc:
         raise DeserializationError() from exc    
 
