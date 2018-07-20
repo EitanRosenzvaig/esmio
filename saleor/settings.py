@@ -459,3 +459,6 @@ ALLOWED_STYLES = ['text-align']
 DEFAULT_MENUS = {
     'top_menu_name': 'navbar',
     'bottom_menu_name': 'footer'}
+
+SERIALIZATION_MODULES = {
+    'json': 'saleor.core.utils.json_serializer'}
