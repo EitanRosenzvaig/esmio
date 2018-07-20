@@ -1,6 +1,7 @@
 from django.core.serializers.json import (
     DjangoJSONEncoder, Serializer as JsonSerializer,
     Deserializer as JsonDeserializer)
+import json
 
 from django.core.serializers.base import DeserializationError
 from django.core.serializers.python import (
@@ -8,7 +9,6 @@ from django.core.serializers.python import (
 )
 
 from prices import Money
-
 
 class Serializer(JsonSerializer):
     def _init_options(self):
@@ -32,12 +32,5 @@ def Deserializer(stream_or_string, **options):
 class CustomJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, Money):
-            return "{} {}".format(obj.amount, obj.currency)
-        return super().default(obj)
-
-
-class CustomJsonDecoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Money):
-            return "{} {}".format(obj.amount, obj.currency)
+            return "{}".format(obj.amount)
         return super().default(obj)
