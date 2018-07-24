@@ -1,5 +1,6 @@
 from django import template
 from django.urls import translate_url as django_translate_url
+from ..utils import query_string_without_page
 
 register = template.Library()
 
@@ -12,3 +13,8 @@ def build_absolute_uri(request, location):
 @register.simple_tag
 def translate_url(url, lang_code):
     return django_translate_url(url, lang_code)
+
+
+@register.simple_tag
+def remove_page_parameter(request):
+    return query_string_without_page(request.META['QUERY_STRING'])

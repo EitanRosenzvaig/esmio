@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -10,7 +11,7 @@ from ...core.utils import get_paginator_items
 from ...core.utils.filters import get_now_sorted_by
 from ..forms import ProductForm
 from .availability import products_with_availability
-from random import shuffle
+import random
 from pdb import set_trace as bp
 
 
@@ -117,14 +118,14 @@ def get_product_list_context(request, filter_set):
     """
     # Avoiding circular dependency
     from ..filters import SORT_BY_FIELDS
+    arg_sort_by = request.GET.get('sort_by')
+    is_descending = arg_sort_by.startswith('-') if arg_sort_by else False
     products_paginated = get_paginator_items(
         filter_set.qs, settings.PAGINATE_BY, request.GET.get('page'))
     products_and_availability = list(products_with_availability(
         products_paginated, request.discounts, request.taxes,
         request.currency))
     now_sorted_by = get_now_sorted_by(filter_set)
-    arg_sort_by = request.GET.get('sort_by')
-    is_descending = arg_sort_by.startswith('-') if arg_sort_by else False
     return {
         'filter_set': filter_set,
         'products': products_and_availability,

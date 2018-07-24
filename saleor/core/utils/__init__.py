@@ -59,6 +59,15 @@ def get_client_ip(request):
     return request.META.get('REMOTE_ADDR', None)
 
 
+def query_string_without_page(filters):
+    if filters:
+        filters = filters.split('&')
+        # Remove page parameter
+        return '&'.join([param for param in filters if 'page' not in param])
+    else:
+        return None
+
+
 def get_country_by_ip(ip_address):
     geo_data = georeader.get(ip_address)
     if (
