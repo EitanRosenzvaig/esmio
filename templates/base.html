@@ -114,13 +114,13 @@
               <div class="d-md-none mobile-search-icon">
                 <svg data-src="{% static "images/search.svg" %}" width="30" height="30"/>
               </div>
-              <form class="form-inline search-form" action="{% url "search:search" %}">
+              <form class="form-inline search-form search-form--hidden" action="{% url "search:search" %}">
                 <div class="mobile-close-search d-md-none">
                   <svg data-src="{% static "images/close.svg" %}" width="30" height="30"/>
                 </div>
                 <input class="form-control" type="text" name="q"
                        value="{% if query %}{{ query }}{% endif %}"
-                       placeholder="{% trans "Search for product" %}"
+                       placeholder="{% trans "Buscar (e.j. Taco rojo)" %}"
                        required>
                 <button class="btn btn-link" type="submit">
                   <svg data-src="{% static "images/search.svg" %}" width="30" height="30"/>
