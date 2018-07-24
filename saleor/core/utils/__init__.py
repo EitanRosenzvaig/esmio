@@ -65,7 +65,7 @@ def query_string_without_page(filters):
         # Remove page parameter
         return '&'.join([param for param in filters if 'page' not in param])
     else:
-        return None
+        return ''
 
 
 def get_country_by_ip(ip_address):
