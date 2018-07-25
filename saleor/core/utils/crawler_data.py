@@ -77,8 +77,6 @@ def full_mongo_import(placeholder_dir):
                 if item['sizes'] and len(item['image_urls']) > 0:
                     product, product_type = create_product(item)
                     for size in item['sizes']:
-                        if not '.' in size:
-                            size = size + '.0'
                         create_size_variant(product, size)
                     if type(item['image_urls']) is list:
                         urls = item['image_urls']
