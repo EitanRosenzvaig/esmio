@@ -126,6 +126,7 @@
         <div>
           <div>
             {% if products %}
+              {% csrf_token %}
               <!-- <div class="row">
                    <div id="mio-filter" data-url={{ object.get_mio_url }}></div>
               </div> -->
@@ -146,7 +147,6 @@
                        width="360"
                        height="360" />
                   <p>{% trans "Sorry, no matches found for your request." context "Search without results text" %}</p>
-                  <p>{% trans "Try again or shop new arrivals." context "Search without results text" %}</p>
                 </div>
               </div>
             {% endif %}
