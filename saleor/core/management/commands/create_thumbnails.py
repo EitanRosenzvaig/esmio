@@ -2,7 +2,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 from versatileimagefield.image_warmer import VersatileImageFieldWarmer
-
+from django.db.models import Q
 from ....product.models import ProductImage
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,8 @@ class Command(BaseCommand):
     def warm_products(self):
         self.stdout.write('Products thumbanails generation:')
         warmer = VersatileImageFieldWarmer(
-            instance_or_queryset=ProductImage.objects.all(),
+            # instance_or_queryset=ProductImage.objects.all(),
+            instance_or_queryset=ProductImage.objects.filter(Q(image__contains='ladystork') | Q(image__contains='natacha')),
             rendition_key_set='products', image_attr='image', verbose=True)
         num_created, failed_to_create = warmer.warm()
         self.log_failed_images(failed_to_create)

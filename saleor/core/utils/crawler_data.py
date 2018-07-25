@@ -107,6 +107,7 @@ def create_product(item):
     print(item)
     product_type = get_product_type('Calzado')
     brand = get_brand_name(product_type, item['brand'])
+    attributes = get_product_attributes(product_type, item)
     category = get_category_object(item)
     description = item['description']
     name = item['title']
@@ -118,6 +119,7 @@ def create_product(item):
         'name': name,
         'price': price,
         'brand': brand,
+        'attributes': attributes,
         'vendor_url': vendor_url,
         'description': description,
         'seo_description': description[:300],
@@ -130,6 +132,12 @@ def get_brand_name(product_type, brand):
     brand_attribute = product_type.product_attributes.filter(slug='brand')[0]
     value = brand_attribute.values.filter(slug=brand)[0]
     return value.name
+
+def get_product_attributes(product_type, item):
+    brand = item['brand']
+    brand_attribute = product_type.product_attributes.filter(slug='brand')[0]
+    value = brand_attribute.values.filter(slug=brand)[0]
+    return {brand_attribute.pk:value.pk}
 
 def create_size_variant(product, size):
     defaults = {
