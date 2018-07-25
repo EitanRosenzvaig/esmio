@@ -34,7 +34,8 @@ def products_with_details(user, product_id=None):
     if product_id is not None:
         product_similarity = products_similar_to(product_id)
         similar_products = product_similarity.get_similar_products()
-        clauses = ' '.join(['WHEN id=%s THEN %s' % (pk, i) for i, pk in enumerate(similar_products)])
+        clauses = ' '.join(['WHEN product_product.id=%s THEN %s' % (pk, i) 
+            for i, pk in enumerate(similar_products)])
         ordering = 'CASE %s END' % clauses
         products = products.filter(pk__in=similar_products).extra(
             select={'ordering': ordering}, order_by=('ordering',))
