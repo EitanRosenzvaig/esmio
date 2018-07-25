@@ -48,6 +48,7 @@
       </div>
     </div> -->
     {% if products %}
+      {% csrf_token %}
       <div class="home__featured">
         <h2 class="text-center">{% trans "Ofertas de la semana" context "Homepage title" %}</h2>
         <div class="row">
