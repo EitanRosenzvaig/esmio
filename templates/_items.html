@@ -45,11 +45,11 @@
             </span>
           </div>
         {% endif %}
-      </div>
-      <div style="padding-top: 5px">
-        <a href="{{ product.get_similar }}?{% remove_page_parameter request=request %}" class="link--clean">
-          <i class="fa fa-search-plus"></i> Ver similares
-        </a>
+        <div style="padding-top: 5px">
+          <a href="{{ product.get_similar }}?{% remove_page_parameter request=request %}" class="link--clean">
+            <i class="fa fa-search-plus"></i> Ver similares
+          </a>
+        </div>
       </div>
     </div>
 </div>

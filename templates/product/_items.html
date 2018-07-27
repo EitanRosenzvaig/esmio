@@ -1,13 +1,14 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load taxed_prices %}
+{% load remove_page_parameter from urls %}
 {% load product_first_image from product_images %}
 {% load get_thumbnail from product_images %}
 {% load placeholder %}
 
 {% for product, availability in products %}
   <div class="col-6 col-lg-3 product-list">
-      <div class="text-center">
+      <div class="text-left">
         <div>
           <a href="{{ product.get_absolute_url }}" class="link--clean">
           <img class="img-responsive lazyload lazypreload"
@@ -49,6 +50,11 @@
           {% else %}
             &nbsp;
           {% endif %}
+        </div>
+        <div style="padding-top: 5px">
+          <a href="{{ product.get_similar }}?{% remove_page_parameter request=request %}" class="link--clean">
+            <i class="fa fa-search-plus"></i> Ver similares
+          </a>
         </div>
       </div>
   </div>

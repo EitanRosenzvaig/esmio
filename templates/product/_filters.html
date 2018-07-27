@@ -30,7 +30,7 @@
             <input type="hidden" name="sort_by" value="{% if request.GET.sort_by %}{{ request.GET.sort_by }}{% endif %}">
           {% elif field.name == 'price' %}
           {% else %}
-            <div class="filter-section" aria-expanded="true">
+            <div class="filter-section filter-section--closed" aria-expanded="false">
               <div class="filter-section__header">
                 <h3>{{ field.label }}</h3>
                 <div class="filter-section__icon">
@@ -47,7 +47,7 @@
         {% endfor %}
         {% for field in filter_set.form %}
           {% if field.name == 'price' %}
-            <div class="filter-section" aria-expanded="true">
+            <div class="filter-section filter-section--closed" aria-expanded="false">
               <div class="filter-section__header">
                 <h3>{% trans 'Price' context 'Filter header' %}</h3>
                 <div class="filter-section__icon">

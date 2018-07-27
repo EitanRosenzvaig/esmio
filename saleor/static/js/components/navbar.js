@@ -12,8 +12,8 @@ const renderNavbar = () => {
 
   if (windowWidth < 768) {
     const $desktopLinks = $desktopLinkBar.find('a').not('.dropdown-link');
+    $searchForm.addClass('search-form--hidden');
     if ($desktopLinks.length) {
-      $searchForm.addClass('search-form--hidden');
       $mobileNav.append('<ul class="nav navbar-nav navbar__menu__login"></ul>');
       $desktopLinks
         .appendTo('.navbar__menu__login')
@@ -28,8 +28,8 @@ const renderNavbar = () => {
     }
   } else {
     const $mobileLinks = $mobileLinkBar.find('a');
+    $searchForm.removeClass('search-form--hidden');
     if ($mobileLinks.length) {
-      $searchForm.removeClass('search-form--hidden');
       $mobileLinks
         .appendTo('.navbar__login ul')
         .wrap('<li></li>')
