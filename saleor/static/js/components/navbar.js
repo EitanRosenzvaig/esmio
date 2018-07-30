@@ -3,6 +3,7 @@ const $mobileNav = $('nav');
 const $searchIcon = $('.mobile-search-icon');
 const $closeSearchIcon = $('.mobile-close-search');
 const $searchForm = $('.search-form');
+const $searchInput = $('.search-input-form');
 
 const renderNavbar = () => {
   const $desktopLinkBar = $('.navbar__login');
@@ -12,7 +13,9 @@ const renderNavbar = () => {
 
   if (windowWidth < 768) {
     const $desktopLinks = $desktopLinkBar.find('a').not('.dropdown-link');
-    $searchForm.addClass('search-form--hidden');
+    if (!$searchInput.is(':focus')) {
+      $searchForm.addClass('search-form--hidden');
+    }
     if ($desktopLinks.length) {
       $mobileNav.append('<ul class="nav navbar-nav navbar__menu__login"></ul>');
       $desktopLinks
