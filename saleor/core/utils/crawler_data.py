@@ -84,7 +84,6 @@ def full_mongo_import(placeholder_dir):
     mongo = MongoReader()
     brands = mongo.get_all_brands()
     shuffle(brands)
-    brands = ['febo']
     for brand in brands:
         image_directory = os.path.join(placeholder_dir, brand)
         for item in mongo.get_all_products_from_brand(brand):
