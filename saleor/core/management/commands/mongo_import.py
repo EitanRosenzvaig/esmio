@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import connection
+import boto3
 
 from ...utils.crawler_data import (
     full_mongo_import)
@@ -9,7 +10,7 @@ from ...utils.crawler_data import (
 
 class Command(BaseCommand):
     help = 'Populate database with data from mongo'
-    placeholders_dir = r'saleor/static/placeholders/'
+    placeholders_dir = r'products/saleor/static/placeholders/'
 
     def add_arguments(self, parser):
         parser.add_argument(
