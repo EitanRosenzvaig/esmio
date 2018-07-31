@@ -46,9 +46,11 @@
       </ul>
     </div>
     <div class="col-md-5">
-      <h3 class="d-md-none float-left filters-toggle">
-        {% trans 'Filters' context 'Filter heading title' %}
-      </h3>
+      <div class="d-md-none float-left filters-toggle">
+        <button class="btn btn-dark"><i class="fa fa-filter"></i> 
+         {% trans 'Filters' context 'Filter heading title' %}
+        </button>
+      </div>
       <div class="sort-by">
         <div class="click-area d-none"></div>
         <button class="btn btn-link">
