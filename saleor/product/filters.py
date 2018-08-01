@@ -109,3 +109,8 @@ class ProductCollectionFilter(ProductFilter):
 
     def _get_variant_attributes_lookup(self):
         return Q(product_variant_types__products__collections=self.collection)
+
+
+class SimilarProductsFilter(SortedFilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

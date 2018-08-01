@@ -9,7 +9,7 @@ from django.urls import reverse
 from ..cart.utils import set_cart_cookie
 from ..core.utils import serialize_decimal
 from ..seo.schema.product import product_json_ld
-from .filters import ProductCategoryFilter, ProductCollectionFilter
+from .filters import ProductCategoryFilter, ProductCollectionFilter, SimilarProductsFilter
 from .models import Category, Collection
 from .utils import (
     collections_visible_to_user, get_product_images, get_product_list_context,
@@ -48,9 +48,13 @@ def product_details(request, slug, product_id, form=None):
         The same PriceRange from price_range represented in user's local
         currency. The value will be None if exchange rate is not available or
         the local currency is the same as site's default currency.
+
+    similar_products:
+        All products that are similar to the current one
     """
-    products = products_with_details(user=request.user)
+    products = products_with_details(user=request.user, product_id=product_id)
     product = get_object_or_404(products, id=product_id)
+    products = products.filter().exclude(id = product_id)
     if product.get_slug() != slug:
         return HttpResponsePermanentRedirect(product.get_absolute_url())
     today = datetime.date.today()
@@ -68,6 +72,9 @@ def product_details(request, slug, product_id, form=None):
     # show_variant_picker determines if variant picker is used or select input
     show_variant_picker = all([v.attributes for v in product.variants.all()])
     json_ld_data = product_json_ld(product, product_attributes)
+    product_filter = SimilarProductsFilter(request.GET, queryset=products)
+    similar_products_ctx = get_product_list_context(
+        request, product_filter, small_pagination=True)
     ctx = {
         'is_visible': is_visible,
         'form': form,
@@ -80,6 +87,7 @@ def product_details(request, slug, product_id, form=None):
             variant_picker_data, default=serialize_decimal),
         'json_ld_product_data': json.dumps(
             json_ld_data, default=serialize_decimal)}
+    ctx.update(similar_products_ctx)
     return TemplateResponse(request, 'product/details.html', ctx)
 
 

@@ -111,7 +111,7 @@ def increase_stock(variant, quantity, allocate=False):
     variant.save(update_fields=update_fields)
 
 
-def get_product_list_context(request, filter_set):
+def get_product_list_context(request, filter_set, small_pagination=False):
     """
     :param request: request object
     :param filter_set: filter set for product list
@@ -119,10 +119,14 @@ def get_product_list_context(request, filter_set):
     """
     # Avoiding circular dependency
     from ..filters import SORT_BY_FIELDS
+    if small_pagination:
+        paginate_by = settings.PAGINATE_BY_SMALL
+    else:
+        paginate_by = settings.PAGINATE_BY
     arg_sort_by = request.GET.get('sort_by')
     is_descending = arg_sort_by.startswith('-') if arg_sort_by else False
     products_paginated = get_paginator_items(
-        filter_set.qs, settings.PAGINATE_BY, request.GET.get('page'))
+        filter_set.qs, paginate_by, request.GET.get('page'))
     products_and_availability = list(products_with_availability(
         products_paginated, request.discounts, request.taxes,
         request.currency))
