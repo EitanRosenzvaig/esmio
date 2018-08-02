@@ -315,6 +315,10 @@ ALLOWED_HOSTS = get_list(os.environ.get('ALLOWED_HOSTS', 'localhost'))
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
 # Amazon S3 configuration
 AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_STATIC_CUSTOM_DOMAIN')
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
