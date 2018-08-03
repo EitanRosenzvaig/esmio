@@ -6,7 +6,7 @@ from ..product.models import Category, Collection, Product
 
 
 class I18nSitemap(Sitemap):
-    protocol = 'https' if settings.ENABLE_SSL else 'http'
+    protocol = 'https' if settings.HTTPS_SITEMAP else 'http'
     i18n = True
 
 
