@@ -315,9 +315,8 @@ ALLOWED_HOSTS = get_list(os.environ.get('ALLOWED_HOSTS', 'localhost'))
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
+# Generate sitemap using https or http
+HTTPS_SITEMAP = os.environ.get('HTTPS_SITEMAP', False)
 
 # Amazon S3 configuration
 AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_STATIC_CUSTOM_DOMAIN')
