@@ -24,7 +24,7 @@ from ...product.thumbnails import create_product_thumbnails
 from ...product.utils.attributes import get_name_from_attributes
 
 from prices import Money
-from decimal import Decimal
+from money_parser import price_dec
 
 # For debugg mode
 from pdb import set_trace as bp
@@ -33,8 +33,8 @@ from random import shuffle
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('import_logger')
 
-NA_IMAGE_PATH = r'saleor/static/placeholders/na_image.png'
-VALID_IMAGE_EXTENSIONS = ['.png', '.jpg']
+NA_IMAGE_PATH = r'products/saleor/static/placeholders/na_image.png'
+VALID_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg']
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -70,11 +70,9 @@ def full_mongo_import(placeholder_dir):
         logger.info('Starting Import of %s', brand)
         image_directory = os.path.join(placeholder_dir, brand)
         brand_items = mongo.get_all_valid_products_from_brand(brand)
-        logger.info('Found a total of %s items', len(brand_items))
         # Eliminate all items that dont exist anymore (obs: dont exist != not in stock)
         delete_removed_items_from_brand(brand_items, brand)
         for item in brand_items:
-            logger.info('Importing %s', item['url'])
             try:
                 if product_exists(item):
                     product = update_product(item)
@@ -85,6 +83,9 @@ def full_mongo_import(placeholder_dir):
             except Exception:
                 logger.error('Failed to update or create product', exc_info=True)
                 raise
+    brand_finished = '%s complete!' % brand
+    logger.info(brand_finished)            
+    yield brand_finished
 
 def delete_removed_items_from_brand(brand_items, brand):
     all_urls = list()
@@ -104,9 +105,16 @@ def parse_item(item):
     category = get_category_object(item)
     description = item['description']
     name = item['title']
-    price = Money(Decimal(item['price']), settings.DEFAULT_CURRENCY)
+    try:
+        price = Money(price_dec(str(item['price'])), settings.DEFAULT_CURRENCY)
+    except Exception:
+        if 'price' in item:
+            logger.error('Failed to parse price %s', item['price'], exc_info=True)
+        else:
+            logger.error('Price parsing error', exc_info=True)
+        raise
     result = {
-        'category': category,
+        'category_id': category.pk,
         'price': price,
         'name': name,
         'description': description,
@@ -120,8 +128,7 @@ def update_product(item):
     parsed_fields = parse_item(item)
     # <= checks if dict is contained in another dict
     if not parsed_fields.items() <= product.__dict__.items():
-        logger.info('Updating product %s', item['url'])
-        logger.info('New %s ----- Old %s', parsed_fields.items(), product.__dict__.items())
+        logger.info('Updating product info of %s', item['url'])
         product.__dict__.update(parsed_fields)
         product.updated_at = timezone.now()
         product.save()
@@ -179,11 +186,16 @@ def format_image_urls(image_urls, brand):
     else:
         urls = [image_urls]
     urls = [parse_url(url) for url in urls]
+    return urls
 
 def create_or_update_images(product, image_urls, brand, image_directory):
     current_images = ProductImage.objects.filter(product_id=product.pk)
     if current_images.count() != len(image_urls):
-        logger.info('Updating images of %s', product.pk)
+        logger.info('Updating images of %s, from %s images to %s images', 
+            product.pk,
+            current_images.count(),
+            len(image_urls)
+            )
         current_images.delete()
         urls = format_image_urls(image_urls, brand)
         save_for_similarity(image_directory, urls[0])
@@ -191,13 +203,18 @@ def create_or_update_images(product, image_urls, brand, image_directory):
             create_product_image(product, image_directory, product_image_url)
 
 def create_or_update_size_variants(product, sizes):
+    sizes = list(set(sizes)) # Delete duplicates
     size_variant = product.product_type.variant_attributes.get(slug='size')
     size_variants = ProductVariant.objects.filter(
                                             product_id=product.pk, 
                                             attributes__has_key=str(size_variant.pk)
                                             )
     if size_variants.count() != len(sizes):
-        logger.info('Updating sizes of %s', product.pk)
+        logger.info('Updating sizes of product_id %s, from %s sizes to %s sizes', 
+            product.pk,
+            size_variants.count(),
+            len(sizes),
+            )
         size_variants.delete()
         for size in sizes:
             create_size_variant(product, size, size_variant)
@@ -228,10 +245,13 @@ def create_product_image(product, placeholder_dir, url):
 def add_file_extention(name, content_type):
     extension = mimetypes.guess_extension(content_type)
     if extension in VALID_IMAGE_EXTENSIONS:
-        return extension
+        return name + extension
     else:
-        return None
+        logger.error('Unknown/Invalid extension %s from content type %s', 
+            extension,
+            content_type)
 
+# TODO: refactor this!
 def generate_image(image_dir, url, local=False):
     request = req.Request(url, headers=HEADERS)
     image_name = str(hash(url))
@@ -239,6 +259,8 @@ def generate_image(image_dir, url, local=False):
         response = req.urlopen(request, timeout=10)
         content_type = response.headers.get_content_type()
         image_name = add_file_extention(image_name, content_type)
+        if image_name is None:
+            return NA_IMAGE_PATH
         file_path = os.path.join(image_dir, image_name)
         image = response.read()
         if not local:
@@ -249,11 +271,11 @@ def generate_image(image_dir, url, local=False):
             f.write(image)
             f.close()
     except timeout:
-        logger.error('socket timed out - %(url)', exc_info=True)
-        file_path = NA_IMAGE_PATH
+        logger.error('socket timed out - %s', url, exc_info=True)
+        return NA_IMAGE_PATH
     except:
-        logger.error('Error generating image - %(url)', exc_info=True)
-        file_path = NA_IMAGE_PATH
+        logger.error('Error generating image - %s', url, exc_info=True)
+        return NA_IMAGE_PATH
     return file_path
 
 def _exists_in_s3(client, bucket, key):

@@ -40,6 +40,7 @@ class MongoReader():
 	def item_is_valid(self, item):
 		try:
 			is_valid = len(item['sizes']) > 0 and len(item['image_urls']) > 0
+			is_valid = is_valid and len(item['sizes']) < 10 and len(item['image_urls']) < 20
 			return is_valid
 		except Exception:
 			if 'url' in item:
