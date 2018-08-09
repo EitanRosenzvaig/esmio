@@ -17,7 +17,7 @@ CATEGORIES = {
 def flatten_text(item):
     res = ''
     for field in TEXT_FIELDS:
-        if field in item:
+        if field in item and item[field] is not None:
             if type(item[field]) is list:
                 res += " " + " ".join(item[field])
             else:
