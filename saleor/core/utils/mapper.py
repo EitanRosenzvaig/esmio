@@ -1,5 +1,19 @@
 TEXT_FIELDS = ['description', 'title', 'breadcrumb']
-CATEGORIES = {
+TOP_CATEGORIES = [
+                'Ballerinas',
+                'Borcegos',
+                'Botas',
+                'Mocasines',
+                'Ojotas',
+                'Panchas',
+                'Plataformas',
+                'Sandalias',
+                'Zapatillas',
+                'Zapatos Y Stilettos',
+                'Zuecos'
+                ]
+
+SUB_CATEGORIES = {
         'Ballerinas': ['ballerina', 'slip','chatita', 'chata', 'balerina'],
         'Borcegos': ['borceg','acordonado'],
         'Botas': ['bota', 'botinet', 'texan', 'tejan', 'abotina', 'botita', 'charrit', 'ankle-boots', 'botín'],
@@ -29,7 +43,8 @@ def get_category(item):
     item_text = flatten_text(item)
     max_cat = 'Zapatos Y Stilettos'
     max_cat_match = 0
-    for cat, sub_cats in CATEGORIES.items():
+    for cat in TOP_CATEGORIES:
+        sub_cats = SUB_CATEGORIES[cat]
         cat_match = item_text.count(cat.lower())
         for sub_cat in sub_cats:
             cat_match += item_text.count(sub_cat)

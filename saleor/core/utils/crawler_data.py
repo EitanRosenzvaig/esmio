@@ -2,7 +2,8 @@ import logging
 import os
 import urllib.request as req
 import urllib.parse as urlparse
-import mimetypes
+import zlib
+from mimetypes import guess_all_extensions
 from socket import timeout
 
 import boto3
@@ -28,12 +29,12 @@ from money_parser import price_dec
 
 # For debugg mode
 from pdb import set_trace as bp
-from random import shuffle
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('import_logger')
 
 NA_IMAGE_PATH = r'products/saleor/static/placeholders/na_image.png'
+MIN_BYTES_FOR_VALID_IMAGE = 1000
 VALID_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg']
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
@@ -53,19 +54,19 @@ BRAND_REORDER = {
 
 STORAGE_SESSION = boto3.session.Session()
 STORAGE_CLIENT = STORAGE_SESSION.client('s3',
-                    region_name='nyc3',
+                    region_name=settings.AWS_REGION_NAME,
                     endpoint_url=settings.AWS_S3_ENDPOINT_URL,
                     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
 )
 STORAGE_BUCKET = settings.AWS_MEDIA_BUCKET_NAME
+SIMILARITY_BUCKET = settings.AWS_SIMILARITY_BUCKET_NAME
 
 def full_mongo_import(placeholder_dir):
     logger.info('Starting MongoReader')
     mongo = MongoReader()
     brands = mongo.get_all_brands()
     logger.info('Total brands from Mongo: %s', len(brands))
-    shuffle(brands)
     for brand in brands:
         logger.info('Starting Import of %s', brand)
         image_directory = os.path.join(placeholder_dir, brand)
@@ -188,19 +189,15 @@ def format_image_urls(image_urls, brand):
     urls = [parse_url(url) for url in urls]
     return urls
 
-def create_or_update_images(product, image_urls, brand, image_directory):
-    current_images = ProductImage.objects.filter(product_id=product.pk)
-    if current_images.count() != len(image_urls):
-        logger.info('Updating images of %s, from %s images to %s images', 
-            product.pk,
-            current_images.count(),
-            len(image_urls)
-            )
-        current_images.delete()
-        urls = format_image_urls(image_urls, brand)
-        save_for_similarity(image_directory, urls[0])
-        for product_image_url in urls:
-            create_product_image(product, image_directory, product_image_url)
+def sort_by_site_generic_order(urls, brand):
+    if brand in BRAND_REORDER:
+        order = BRAND_REORDER[brand]
+        result = []
+        for i in range(min(len(urls),len(order))):
+            result.append(urls[order[i]])
+        return result
+    else:
+        return urls
 
 def create_or_update_size_variants(product, sizes):
     sizes = list(set(sizes)) # Delete duplicates
@@ -235,24 +232,66 @@ def create_size_variant(product, size, size_variant):
             variant.name = get_name_from_attributes(variant)
         variant.save()
 
-def create_product_image(product, placeholder_dir, url):
-    image = generate_image(placeholder_dir, url)
+def create_or_update_images(product, image_urls, brand, image_directory):
+    current_images = ProductImage.objects.filter(product_id=product.pk)
+    if current_images.count() != len(image_urls):
+        logger.info('Updating images of %s, from %s images to %s images', 
+            product.pk,
+            current_images.count(),
+            len(image_urls)
+            )
+        current_images.delete()
+        urls = format_image_urls(image_urls, brand)
+        for i, product_image_url in enumerate(urls):
+            upload_similarity = i == 0 # Upload first image for similarity
+            create_product_image(product, image_directory, product_image_url, upload_similarity)
+
+def create_product_image(product, placeholder_dir, url, upload_similarity):
+    image = generate_image(placeholder_dir, url, upload_similarity)
     product_image = ProductImage(product=product, image=image)
     product_image.save()
     create_product_thumbnails.delay(product_image.pk)
-    return product_image
+
+def intersection(lst1, lst2):
+    return list(set(lst1) & set(lst2))
 
 def add_file_extention(name, content_type):
-    extension = mimetypes.guess_extension(content_type)
-    if extension in VALID_IMAGE_EXTENSIONS:
-        return name + extension
+    possible_extensions = guess_all_extensions(content_type)
+    extensions = intersection(possible_extensions, VALID_IMAGE_EXTENSIONS)
+    if len(extensions) > 0:
+        return name + extensions[0]
     else:
-        logger.error('Unknown/Invalid extension %s from content type %s', 
-            extension,
-            content_type)
+        logger.error('Unknown/Invalid content type %s', content_type)
+
+def upload_image(bucket, path, image, local):
+    try:
+        if local:
+            if not os.path.isfile(path):
+                f = open(path, 'wb')
+                f.write(image)
+                f.close()
+        else:
+            if not _exists_in_s3(bucket, path):
+                STORAGE_CLIENT.put_object(Key=path, Body=image,
+                            Bucket=bucket)
+    except:
+        logger.error('Error uploading image %s to bucket %s', path, bucket, exc_info=True)
+        raise
+
+def _exists_in_s3(bucket, key):
+    """return the key's size if it exist, else None"""
+    try:
+        obj = STORAGE_CLIENT.head_object(Bucket=bucket, Key=key)
+        return obj['ContentLength'] > 0
+    except ClientError as exc:
+        if exc.response['Error']['Code'] == '404':
+            return False
+        else:
+            logger.error('Error checking for existence of %s', key, exc_info=True)
+            raise
 
 # TODO: refactor this!
-def generate_image(image_dir, url, local=False):
+def generate_image(image_dir, url, upload_similarity, local=False):
     request = req.Request(url, headers=HEADERS)
     image_name = str(hash(url))
     try:
@@ -263,13 +302,15 @@ def generate_image(image_dir, url, local=False):
             return NA_IMAGE_PATH
         file_path = os.path.join(image_dir, image_name)
         image = response.read()
-        if not local:
-            STORAGE_CLIENT.put_object(Key=file_path, Body=image,
-                        Bucket=STORAGE_BUCKET)
+        if len(image) > MIN_BYTES_FOR_VALID_IMAGE:
+            upload_image(STORAGE_BUCKET, file_path, image, local)
+            if upload_similarity:
+                compressed_image = zlib.compress(image, 9)
+                compressed_file_path = file_path + '.gzip'
+                upload_image(SIMILARITY_BUCKET, compressed_file_path, compressed_image, local)
         else:
-            f = open(file_path, 'wb')
-            f.write(image)
-            f.close()
+            logger.error('Image from %s is to small, it has %s bytes', url, len(image))
+            return NA_IMAGE_PATH
     except timeout:
         logger.error('socket timed out - %s', url, exc_info=True)
         return NA_IMAGE_PATH
@@ -277,29 +318,3 @@ def generate_image(image_dir, url, local=False):
         logger.error('Error generating image - %s', url, exc_info=True)
         return NA_IMAGE_PATH
     return file_path
-
-def _exists_in_s3(client, bucket, key):
-    """return the key's size if it exist, else None"""
-    try:
-        obj = client.head_object(Bucket=bucket, Key=key)
-        return obj['ContentLength']
-    except ClientError as exc:
-        if exc.response['Error']['Code'] != '404':
-            raise
-
-def sort_by_site_generic_order(urls, brand):
-    if brand in BRAND_REORDER:
-        order = BRAND_REORDER[brand]
-        result = []
-        for i in range(min(len(urls),len(order))):
-            result.append(urls[order[i]])
-        return result
-    else:
-        return urls
-
-
-def save_for_similarity(image_directory, url):
-    similarity_directory = os.path.join(image_directory, 'similarity')
-    if not os.path.exists(similarity_directory):
-        os.makedirs(similarity_directory)
-    image = generate_image(similarity_directory, url, local=False)
