@@ -80,7 +80,7 @@ def full_mongo_import(placeholder_dir):
                 else:
                     product = create_product(item)
                 create_or_update_size_variants(product, item['sizes'])
-                # create_or_update_images(product, item['image_urls'], brand, image_directory)
+                create_or_update_images(product, item['image_urls'], brand, image_directory)
             except Exception:
                 logger.error('Failed to update or create product', exc_info=True)
                 raise
