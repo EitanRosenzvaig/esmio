@@ -80,7 +80,7 @@ def full_mongo_import(placeholder_dir):
                 else:
                     product = create_product(item)
                 create_or_update_size_variants(product, item['sizes'])
-                create_or_update_images(product, item['image_urls'], brand, image_directory)
+                # create_or_update_images(product, item['image_urls'], brand, image_directory)
             except Exception:
                 logger.error('Failed to update or create product', exc_info=True)
                 raise
@@ -93,8 +93,9 @@ def delete_removed_items_from_brand(brand_items, brand):
     for item in brand_items:
         all_urls.append(item['url'])
     if len(all_urls) > 0:
-        brand = get_brand_name(brand)
-        products_to_delete = Product.objects.filter(brand=brand).exclude(vendor_url__in=all_urls)
+        brand_name = get_brand_name(brand)
+        products_to_delete = Product.objects.filter(brand=brand_name) \
+                                            .exclude(vendor_url__in=all_urls)
         logger.info('Deleting a total of %s items from database', products_to_delete.count())
         products_to_delete.delete()
         logger.info('Products deleted')
@@ -199,6 +200,12 @@ def sort_by_site_generic_order(urls, brand):
     else:
         return urls
 
+# TODO: dont go to database on every request.
+def get_size_values(size_variant, size_variants):
+    attribute_choices = AttributeChoiceValue.objects.filter(attribute_id=size_variant.pk)
+    size_attribute_ids = [variant.attributes[str(size_variant.pk)] for variant in size_variants]
+    return set(attribute_choices.get(pk=id).name for id in size_attribute_ids)
+
 def create_or_update_size_variants(product, sizes):
     sizes = list(set(sizes)) # Delete duplicates
     size_variant = product.product_type.variant_attributes.get(slug='size')
@@ -206,7 +213,7 @@ def create_or_update_size_variants(product, sizes):
                                             product_id=product.pk, 
                                             attributes__has_key=str(size_variant.pk)
                                             )
-    if size_variants.count() != len(sizes):
+    if get_size_values(size_variant, size_variants) != set(sizes):
         logger.info('Updating sizes of product_id %s, from %s sizes to %s sizes', 
             product.pk,
             size_variants.count(),
@@ -231,6 +238,8 @@ def create_size_variant(product, size, size_variant):
         if variant.attributes:
             variant.name = get_name_from_attributes(variant)
         variant.save()
+    else:
+        logger.warning('Size %s does not exists', size)
 
 def create_or_update_images(product, image_urls, brand, image_directory):
     current_images = ProductImage.objects.filter(product_id=product.pk)
