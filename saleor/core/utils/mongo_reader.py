@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from pymongo import DESCENDING
+from django.conf import settings
 import logging
 
 logger = logging.getLogger('import_logger')
