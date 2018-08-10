@@ -318,6 +318,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Generate sitemap using https or http
 HTTPS_SITEMAP = os.environ.get('HTTPS_SITEMAP', False)
 
+MONGO_IMPORT_CONNECTION = os.environ.get('MONGO_CONNECTION_STRING', False)
+
 # Amazon S3 configuration
 AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_STATIC_CUSTOM_DOMAIN')
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')

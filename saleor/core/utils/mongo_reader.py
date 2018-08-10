@@ -5,8 +5,8 @@ import logging
 logger = logging.getLogger('import_logger')
 
 class MongoReader():
-	client = MongoClient('localhost', 27017)
-	ropa_db = client['ropa']
+	client = MongoClient(settings.MONGO_IMPORT_CONNECTION, 27017)
+	ropa_db = client['esmio']
 	items = ropa_db['items']
 
 	def get_all_brands(self):
