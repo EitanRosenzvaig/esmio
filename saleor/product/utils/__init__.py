@@ -26,14 +26,22 @@ def products_visible_to_user(user):
 def products_similar_to(product_id):
     # pylint: disable=cyclic-import
     from ..models import ProductSimilarity
-    return ProductSimilarity.objects.get(product_id=product_id)
+    try:
+        similar_products = ProductSimilarity.objects.get(product_id=product_id)
+        return similar_products
+    except ProductSimilarity.DoesNotExist:
+        return None
 
 
 def products_with_details(user, product_id=None):
     products = products_visible_to_user(user)
     if product_id is not None:
         product_similarity = products_similar_to(product_id)
-        similar_products = product_similarity.get_similar_products()
+        # HOTFIX: FIXING WHEN SIMILARITY NOT CALCULATED
+        if product_similarity:
+            similar_products = product_similarity.get_similar_products()
+        else:
+            similar_products = [product_id]
         clauses = ' '.join(['WHEN product_product.id=%s THEN %s' % (pk, i) 
             for i, pk in enumerate(similar_products)])
         ordering = 'CASE %s END' % clauses
