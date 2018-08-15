@@ -38,7 +38,7 @@ CACHES = {'default': django_cache_url.config()}
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://app:inHIMwetrust@localhost:5432/esmio',
+        default=os.environ.get('PSQL_ESMIO_APP'),
         conn_max_age=600)}
 
 
