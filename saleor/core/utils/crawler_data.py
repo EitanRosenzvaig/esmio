@@ -70,9 +70,17 @@ def full_mongo_import(placeholder_dir):
     for brand in brands:
         logger.info('Starting Import of %s', brand)
         image_directory = os.path.join(placeholder_dir, brand)
-        brand_items = mongo.get_all_valid_products_from_brand(brand)
+        try:
+            brand_items = mongo.get_all_valid_products_from_brand(brand)
+        except Exception:
+            logger.error('Failed get brand items from mongo for %s', brand, exc_info=True)
+            continue
         # Eliminate all items that dont exist anymore (obs: dont exist != not in stock)
-        delete_removed_items_from_brand(brand_items, brand)
+        try:
+            delete_removed_items_from_brand(brand_items, brand)
+        except Exception:
+            logger.error('Failed to remove brand items for %s', brand, exc_info=True)
+            continue     
         for item in brand_items:
             try:
                 if product_exists(item):
@@ -83,7 +91,6 @@ def full_mongo_import(placeholder_dir):
                 create_or_update_images(product, item['image_urls'], brand, image_directory)
             except Exception:
                 logger.error('Failed to update or create product', exc_info=True)
-                raise
     brand_finished = '%s complete!' % brand
     logger.info(brand_finished)            
     yield brand_finished
