@@ -90,6 +90,9 @@
 }
 
 .menu {
+  &-hamburguer {
+    margin-left: 1px;
+  }
   .menu__item {
     ul {
       border-bottom: none;

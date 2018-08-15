@@ -109,10 +109,16 @@
 {% endblock %}
 
 {% block topcontent %}
-  {% if object.background_image %}
-<!--     <div class="row" id="product-list-image" style="background-image: url('{{ object.background_image.url }}')"></div> -->
-    <div class="row" id="product-list-image" style="background-image: url('{% static "images/logo_banner.png" %}')"></div>
-  {% endif %}
+  <div class="row">
+    <div class="col-md-8 col-lg-12">
+      <div class="product-category">
+        <h1 class="product-category-header">{{ object.name }} de Mujer</h1>
+        {% if object.header %}
+          <p class="product-category-description">{{ object.header }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 {% endblock topcontent %}
 
 {% block content %}

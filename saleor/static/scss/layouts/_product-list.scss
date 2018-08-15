@@ -11,6 +11,19 @@
   }
 }
 
+.product-category {
+  margin-top: $global-margin;
+  margin-bottom: $global-margin;
+  &-header {
+    font-size: 27px;
+    font-family: brown bold,helvetica neue,Helvetica,Arial,sans-serif;
+    font-weight: 850;
+  }
+  &-description {
+    font-family: 'univers 45 light',helvetica neue,Helvetica,Arial,sans-serif;
+  }
+}
+
 .product-list {
   text-align: center;
   margin-bottom: $global-margin * 2;

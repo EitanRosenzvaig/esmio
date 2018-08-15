@@ -30,6 +30,7 @@ class Category(MPTTModel, SeoModel):
     name = models.CharField(max_length=128)
     slug = models.SlugField(max_length=128)
     description = models.TextField(blank=True)
+    header = models.TextField(blank=True)
     parent = models.ForeignKey(
         'self', null=True, blank=True, related_name='children',
         on_delete=models.CASCADE)
