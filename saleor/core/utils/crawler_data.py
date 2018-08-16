@@ -212,7 +212,7 @@ def sort_by_site_generic_order(urls, brand):
 def get_size_values(size_variant, size_variants):
     attribute_choices = AttributeChoiceValue.objects.filter(attribute_id=size_variant.pk)
     size_attribute_ids = [variant.attributes[str(size_variant.pk)] for variant in size_variants]
-    return set(attribute_choices.get(pk=id).name for id in size_attribute_ids)
+    return set(int(attribute_choices.get(pk=id).name) for id in size_attribute_ids)
 
 def create_or_update_size_variants(product, sizes):
     sizes = list(set(sizes)) # Delete duplicates
@@ -222,11 +222,12 @@ def create_or_update_size_variants(product, sizes):
                                             attributes__has_key=str(size_variant.pk)
                                             )
     sizes = sizes_normalize(sizes)
-    if get_size_values(size_variant, size_variants) != set(sizes):
+    size_variants_norm_set = get_size_values(size_variant, size_variants)
+    if size_variants_norm_set != set(sizes):
         logger.info('Updating sizes of product_id %s, from %s sizes to %s sizes', 
             product.pk,
-            size_variants.count(),
-            len(sizes),
+            size_variants_norm_set,
+            set(sizes),
             )
         size_variants.delete()
         for size in sizes:
