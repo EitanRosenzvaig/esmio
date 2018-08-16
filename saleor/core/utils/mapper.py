@@ -1,6 +1,6 @@
 TEXT_FIELDS = ['description', 'title', 'breadcrumb']
 TOP_CATEGORIES = [
-                'Ballerinas',
+                'Balerinas',
                 'Borcegos',
                 'Botas',
                 'Mocasines',
