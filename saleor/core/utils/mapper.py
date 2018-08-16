@@ -14,7 +14,7 @@ TOP_CATEGORIES = [
                 ]
 
 SUB_CATEGORIES = {
-        'Ballerinas': ['ballerina', 'slip','chatita', 'chata', 'balerina'],
+        'Balerinas': ['ballerina', 'slip','chatita', 'chata', 'balerina'],
         'Borcegos': ['borceg','acordonado'],
         'Botas': ['bota', 'botinet', 'texan', 'tejan', 'abotina', 'botita', 'charrit', 'ankle-boots', 'botín'],
         'Mocasines': ['casual', 'mocasin', 'oxford', 'acordonado', 'creeper', 'flat'],
