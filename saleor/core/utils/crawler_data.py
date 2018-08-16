@@ -26,7 +26,7 @@ from ...product.utils.attributes import get_name_from_attributes
 
 from prices import Money
 from money_parser import price_dec
-from text_parser import sizes_normalize
+from ...core.utils.text_parser import sizes_normalize
 
 # For debugg mode
 from pdb import set_trace as bp
