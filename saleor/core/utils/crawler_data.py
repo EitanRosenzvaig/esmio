@@ -26,6 +26,7 @@ from ...product.utils.attributes import get_name_from_attributes
 
 from prices import Money
 from money_parser import price_dec
+from text_parser import sizes_normalize
 
 # For debugg mode
 from pdb import set_trace as bp
@@ -220,6 +221,7 @@ def create_or_update_size_variants(product, sizes):
                                             product_id=product.pk, 
                                             attributes__has_key=str(size_variant.pk)
                                             )
+    sizes = sizes_normalize(sizes)
     if get_size_values(size_variant, size_variants) != set(sizes):
         logger.info('Updating sizes of product_id %s, from %s sizes to %s sizes', 
             product.pk,

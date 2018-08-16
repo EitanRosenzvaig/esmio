@@ -156,12 +156,15 @@
 {% block footer %}
   <footer class="footer">
     <div class="container">
-      <div class="row">
-        <div class="col-md-3">
-          <a href="{% url 'home' %}" class="footer__logo">
-            <svg data-src="{% static "images/logo.svg" %}" height="68px" width="226px"/>
-          </a>
-        </div>
+      <div class="row" style="height: 5em; position: relative">
+        <a href="{% url 'home' %}" class="footer__logo" style="margin: 0; position: absolute; top:30%; left: 50%;
+      margin-right: -50%; transform: translate(-50%, -50%);">
+          <svg data-src="{% static "images/logo.svg" %}" height="68px" width="226px"/>
+        </a>
+        <p style="margin: 0; position: absolute; top:90%; left: 50%;
+          margin-right: -50%; transform: translate(-50%, -50%);">contacto@esmio.com.ar
+        </p>
+      </div>
         <!-- <div class="col-md-3 col-sm-6">
           {% menu site_menu=site.settings.bottom_menu %}
         </div>
@@ -237,8 +240,8 @@
             <svg data-src="{% static "images/instagram-logo.svg" %}" width="45px" height="45px"/>
           </a>
         </div>
-      </div> -->
-    </div>
+      </div>
+    </div> -->
   </footer>
 {% endblock %}
 {% block footer_scripts %}
