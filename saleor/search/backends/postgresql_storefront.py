@@ -16,8 +16,9 @@ def search(phrase):
 
     """
     name_sim = TrigramSimilarity('name', phrase)
+    brand_sim = TrigramSimilarity('brand', phrase)
     published = Q(is_published=True)
     ft_in_description = Q(description__search=phrase)
     name_similar = Q(name_sim__gt=0.2)
     return Product.objects.annotate(name_sim=name_sim).filter(
-        (ft_in_description | name_similar) & published)
+        (ft_in_description | name_similar | brand_sim) & published)
