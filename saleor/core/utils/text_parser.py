@@ -61,7 +61,7 @@ def sizes_normalize(sizes):
 def _clean_size(size):
     # Use Price normalizer
     try:
-        size = int(price_dec(size))
+        size = int(price_dec(str(size)))
     except Exception as e:
         print(e,size)
         return None
