@@ -46,11 +46,12 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
        'Connection': 'keep-alive'}
 
 BRAND_REORDER = {
-               'sofimartire': [2,0,1,3,4],
-               'viauno': [2,0,1,3,4],
-               'benditopie': [1,0,2],
-               'clarabarcelo': [2,0,1,3,4],
-               'heyas': [2,0,1,3,4]
+               'sofimartire': [2,0,1,3,4,5,6],
+               'viauno': [2,0,1,3,4,5,6],
+               'benditopie': [1,0,2,3,4,5,6],
+               'clarabarcelo': [2,0,1,3,4,5,6],
+               'heyas': [2,0,1,3,4,5,6],
+               'batistella': [1,0,2,3,4,5,6]
                 }
 
 STORAGE_SESSION = boto3.session.Session()
@@ -92,9 +93,9 @@ def full_mongo_import(placeholder_dir):
                 create_or_update_images(product, item['image_urls'], brand, image_directory)
             except Exception:
                 logger.error('Failed to update or create product', exc_info=True)
-    brand_finished = '%s complete!' % brand
-    logger.info(brand_finished)            
-    yield brand_finished
+        brand_finished = '%s complete!' % brand
+        logger.info(brand_finished)
+        yield brand_finished
 
 def delete_removed_items_from_brand(brand_items, brand):
     all_urls = list()
