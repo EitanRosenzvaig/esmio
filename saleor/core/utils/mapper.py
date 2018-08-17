@@ -6,11 +6,11 @@ TOP_CATEGORIES = [
                 'Mocasines',
                 'Ojotas',
                 'Panchas',
-                'Plataformas',
                 'Sandalias',
                 'Zapatillas',
                 'Zapatos Y Stilettos',
-                'Zuecos'
+                'Zuecos',
+                'Plataformas'
                 ]
 
 SUB_CATEGORIES = {
@@ -20,7 +20,7 @@ SUB_CATEGORIES = {
         'Mocasines': ['casual', 'mocasin', 'oxford', 'acordonado', 'creeper', 'flat'],
         'Ojotas': ['ojot'],
         'Panchas': ['pancha', 'alpargat', 'espadrill', 'chancla', 'pantuf'],
-        'Plataformas': ['plataformas', 'plataforma'],
+        'Plataformas': ['plataformas'],
         'Sandalias' : ['sandal', 'atanad', 'roman'],
         'Zapatillas': ['zapatilla', 'urbana', 'sneak', 'nautic', 'runing'],
         'Zapatos Y Stilettos': ['zapato', 'noche', 'taco', 'vestir', 'stillet', 'escotado', 'semi abierto', 'fajon'],
@@ -43,13 +43,15 @@ def get_category(item):
     item_text = flatten_text(item)
     max_cat = 'Zapatos Y Stilettos'
     max_cat_match = 0
-    for cat in TOP_CATEGORIES:
-        sub_cats = SUB_CATEGORIES[cat]
-        cat_match = item_text.count(cat.lower())
+    for top_cat in TOP_CATEGORIES:
+        sub_cats = SUB_CATEGORIES[top_cat]
+        cat_match = item_text.count(top_cat.lower())
+        if cat_match > 0:
+            return top_cat
         for sub_cat in sub_cats:
             cat_match += item_text.count(sub_cat)
         if cat_match > max_cat_match:
             max_cat_match = cat_match
-            max_cat = cat
+            max_cat = top_cat
     return max_cat
 
