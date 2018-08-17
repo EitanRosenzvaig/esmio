@@ -52,9 +52,8 @@ def product_details(request, slug, product_id, form=None):
     similar_products:
         All products that are similar to the current one
     """
-    products = products_with_details(user=request.user, product_id=product_id)
+    products = products_with_details(user=request.user)
     product = get_object_or_404(products, id=product_id)
-    products = products.filter().exclude(id = product_id)
     if product.get_slug() != slug:
         return HttpResponsePermanentRedirect(product.get_absolute_url())
     today = datetime.date.today()
@@ -72,9 +71,6 @@ def product_details(request, slug, product_id, form=None):
     # show_variant_picker determines if variant picker is used or select input
     show_variant_picker = all([v.attributes for v in product.variants.all()])
     json_ld_data = product_json_ld(product, product_attributes)
-    product_filter = SimilarProductsFilter(request.GET, queryset=products)
-    similar_products_ctx = get_product_list_context(
-        request, product_filter, small_pagination=True)
     ctx = {
         'is_visible': is_visible,
         'form': form,
@@ -87,7 +83,14 @@ def product_details(request, slug, product_id, form=None):
             variant_picker_data, default=serialize_decimal),
         'json_ld_product_data': json.dumps(
             json_ld_data, default=serialize_decimal)}
-    ctx.update(similar_products_ctx)
+    # If google bot then we dont show similar products
+    if 'googlebot' not in request.META['HTTP_USER_AGENT'].lower():
+        products = products_with_details(user=request.user, product_id=product_id)
+        products = products.filter().exclude(id = product_id)
+        product_filter = SimilarProductsFilter(request.GET, queryset=products)
+        similar_products_ctx = get_product_list_context(
+            request, product_filter, small_pagination=True)
+        ctx.update(similar_products_ctx)
     return TemplateResponse(request, 'product/details.html', ctx)
 
 
