@@ -184,10 +184,11 @@ def parse_url(url):
     # Fix wrongly encoded URL strings:
     if not url.startswith('http'):
         url = 'https://' + url
-    url = urlparse.urlsplit(url)
-    url = list(url)
-    url[2] = urlparse.quote(url[2])
-    url = urlparse.urlunsplit(url)
+    # This was needed before but now it is not working and not really needed in any case
+    # url = urlparse.urlsplit(url)
+    # url = list(url)
+    # url[2] = urlparse.quote(url[2])
+    # url = urlparse.urlunsplit(url)
     return url
 
 def format_image_urls(image_urls, brand):
