@@ -51,7 +51,9 @@ BRAND_REORDER = {
                'benditopie': [1,0,2,3,4,5,6],
                'clarabarcelo': [2,0,1,3,4,5,6],
                'heyas': [2,0,1,3,4,5,6],
-               'batistella': [1,0,2,3,4,5,6]
+               'batistella': [1,0,2,3,4,5,6],
+               'margiefranzini' : [1,0,2,3,4,5,6],
+               'mishka': [2,0,1,3,4,5,6]
                 }
 
 STORAGE_SESSION = boto3.session.Session()
@@ -204,8 +206,11 @@ def sort_by_site_generic_order(urls, brand):
     if brand in BRAND_REORDER:
         order = BRAND_REORDER[brand]
         result = []
-        for i in range(min(len(urls),len(order))):
-            result.append(urls[order[i]])
+        i = 0
+        while len(result) < len(urls) and i < len(order):
+            if len(urls) > order[i]:
+                result.append(urls[order[i]])
+            i+=1
         return result
     else:
         return urls
