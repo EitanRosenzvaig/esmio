@@ -1,5 +1,7 @@
 import 'jquery';
 import 'jquery.cookie';
+import 'waypoints';
+import 'infinite';
 import 'bootstrap';
 
 import '../scss/storefront.scss';
@@ -16,4 +18,4 @@ import './components/password-input';
 import './components/styleguide';
 import './components/misc';
 import './components/heart';
-import './components/mio-filter';
+import './components/infinite-scroll';

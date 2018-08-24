@@ -6,7 +6,7 @@
 {% load get_thumbnail from product_images %}
 
 {% for product, availability in products %}
-<div class="col-6 col-lg-3 product-list">
+<div class="infinite-item col-6 col-lg-3 product-list">
     <div class="text-left">
       <div>
         <a href="{{ product.get_absolute_url }}" class="link--clean">

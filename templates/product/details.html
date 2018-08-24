@@ -219,14 +219,20 @@
             <strong>Tambien te puede gustar</strong>
             <svg data-src="{% static "favicons/hangers.svg" %}" height="20px" width="40px"/>
            </span>
-          <div class="row" style="margin-top: 20px;">
+          <div class="row infinite-container" style="margin-top: 20px;">
             {% include "_items.html" with products=products %}
           </div>
           <div class="row">
             <div class="m-auto">
-              {% if products_paginated.has_other_pages %}
+              <!-- {% if products_paginated.has_other_pages %}
                 {% bootstrap_pagination products_paginated extra=request.GET.urlencode %}
+              {% endif %} -->
+              {% if products_paginated.has_next %}
+                <a class="infinite-more-link" href="?page={{ products_paginated.next_page_number }}"></a>
               {% endif %}
+              <div class="loading" style="display: none;">
+                  <img src="{% static "images/loading.gif" %}">
+              </div>
             </div>
           </div>
         </div>

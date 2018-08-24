@@ -109,6 +109,8 @@ var config = {
   resolve: {
     alias: {
       'jquery': resolve('node_modules/jquery/dist/jquery.js'),
+      'waypoints': resolve('node_modules/waypoints/lib/noframework.waypoints.min.js'),
+      'infinite': resolve('node_modules/waypoints/lib/shortcuts/infinite.min.js'),
       'react': resolve('node_modules/react/dist/react.min.js'),
       'react-dom': resolve('node_modules/react-dom/dist/react-dom.min.js')
     }
