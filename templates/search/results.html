@@ -22,10 +22,17 @@
   <div class="row home__featured">
     <div class="col-12">
       {% if query and results %}
-        <div class="row">
+        <div class="row infinite-container">
           {% include "product/_items.html" with products=results %}
+          <div class="m-auto">
+            {% if results.has_next %}
+              <a class="infinite-more-link" href="{{ query_string }}&page={{ results.next_page_number }}"></a>
+            {% endif %}
+            <div class="loading" style="display: none;">
+              <img src="{% static "images/loading.gif" %}">
+            </div>
+          </div>
         </div>
-        {% bootstrap_pagination results url=query_string %}
       {% else %}
         <div class="row no-results">
           <div class="col-12">

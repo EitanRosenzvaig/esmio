@@ -138,14 +138,17 @@
               <!-- <div class="row">
                    <div id="mio-filter" data-url={{ object.get_mio_url }}></div>
               </div> -->
-              <div class="row">
+              <div class="row infinite-container">
                 {% include "_items.html" with products=products %}
               </div>
               <div class="row">
                 <div class="m-auto">
-                  {% if products_paginated.has_other_pages %}
-                    {% bootstrap_pagination products_paginated extra=request.GET.urlencode %}
-                  {% endif %}
+                {% if products_paginated.has_next %}
+                  <a class="infinite-more-link" href="?page={{ products_paginated.next_page_number }}"></a>
+                {% endif %}
+                <div class="loading" style="display: none;">
+                  <img src="{% static "images/loading.gif" %}">
+                </div>
                 </div>
               </div>
             {% else %}
