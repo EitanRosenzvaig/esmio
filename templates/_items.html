@@ -20,13 +20,13 @@
             <div class="product-list-brand-name" title="{{ product }}">{{ product.brand }}
             </div>
           </a>
-          <button type="button" class="far fa-bell heart" aria-hidden="true"
+          <button type="button" class="far fa-bell bell" aria-hidden="true"
             data-pk="{{ product.pk }}"
             {% if forloop.first %}
             data-toggle="tooltip"
             title="Te avisamos cuando esto entra en oferta"
             {% endif %}
-            data-url="{{ product.get_heart_url }}">
+            data-url="{{ product.get_bell_url }}">
           </button>
         </div>
         <span class="product-list-item-name" title="{{ product }}">{{ product }}

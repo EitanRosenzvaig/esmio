@@ -1,10 +1,13 @@
 a.btn {
   display: inline-block;
 }
-.heart {
+.bell {
   background-color:transparent; 
   border: none; 
   float: right;
+  &:focus {
+    outline:0;
+  }
 }
 .btn {
   transition: 0.3s;
