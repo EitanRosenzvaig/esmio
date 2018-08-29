@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load materializecss %}
+{% load staticfiles %}
+{% load build_absolute_uri from urls %}
+
+{% block title %}
+  {% if page.seo_title %}
+    {{ page.seo_title }}
+  {% else %}
+    {{ page.title }} - {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+{% block meta_tags %}
+  <meta property="og:title" content="{{ page.seo_title|default:page.title }}">
+  <meta property="og:description" content="{{ page.seo_description|default:"" }}">
+  <meta name="description" content="{{ page.seo_description|default:"" }}">
+
+  {% build_absolute_uri request=request location=page.get_absolute_url as page_url %}
+  <meta property="og:url" content="{{ page_url }}">
+{% endblock meta_tags %}
+
+{% block breadcrumb %}
+  <ul class="breadcrumbs list-unstyled">
+    <li>
+      <a href="{% url 'home' %}">
+        {% trans "Home" context "Main navigation item" %}
+      </a>
+    </li>
+    {% if page %}
+      <li>
+        <a href="{{ page.get_absolute_url }}">{{ page.title }}</a>
+      </li>
+    {% endif %}
+  </ul>
+{% endblock breadcrumb %}
+{% block content %}
+  {% if products %}
+    <div id="product-list-page">
+      {% csrf_token %}
+      <div class="col-md-12 col-12 product-list">
+        <div>
+          <div>
+            <div class="row infinite-container" style="margin-top: 20px;">
+              {% include "_items.html" with products=products %}
+            </div>
+            <div class="row">
+              <div class="m-auto">
+                {% if products_paginated.has_next %}
+                  <a class="infinite-more-link" href="?page={{ products_paginated.next_page_number }}"></a>
+                {% endif %}
+                <div class="loading" style="display: none;">
+                    <img src="{% static "images/loading.gif" %}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock content %}
