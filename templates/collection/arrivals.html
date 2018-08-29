@@ -36,6 +36,11 @@
   </ul>
 {% endblock breadcrumb %}
 {% block content %}
+  <div class="row">
+    <div class="m-auto">
+      <h1 class="product-category-header"> LO NUEVO DE ESTA SEMANA! </h1>
+    </div>
+  </div>
   {% if products %}
     <div id="product-list-page">
       {% csrf_token %}
