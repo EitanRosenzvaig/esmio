@@ -9,7 +9,7 @@ from django.urls import reverse
 from ..cart.utils import set_cart_cookie
 from ..core.utils import serialize_decimal
 from ..seo.schema.product import product_json_ld
-from .filters import ProductCategoryFilter, ProductCollectionFilter, SimilarProductsFilter
+from .filters import ProductCategoryFilter, ProductCollectionFilter, SimpleFilter
 from .models import Category, Collection
 from .utils import (
     collections_visible_to_user, get_product_images, get_product_list_context,
@@ -87,7 +87,7 @@ def product_details(request, slug, product_id, form=None):
     if 'googlebot' not in request.META['HTTP_USER_AGENT'].lower():
         products = products_with_details(user=request.user, product_id=product_id)
         products = products.filter().exclude(id = product_id)
-        product_filter = SimilarProductsFilter(request.GET, queryset=products)
+        product_filter = SimpleFilter(request.GET, queryset=products)
         similar_products_ctx = get_product_list_context(
             request, product_filter, small_pagination=True)
         ctx.update(similar_products_ctx)

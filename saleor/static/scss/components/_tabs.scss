@@ -16,7 +16,16 @@
     & + .nav-item {
       margin-left: 0;
     }
+    .big {
+      font-size: 1.1rem;
+      .hot {
+        color: red;
+      }
+    }
     .nav-link {
+      &.hot {
+        color: red;
+      }
       padding: $global-padding / 2 $global-padding * 2;
       margin-top: $global-margin / 2;
       display: inline-block;

@@ -1,5 +1,22 @@
 {% url 'home' as home_url %}
 <ul class="menu {% if horizontal %}nav mb-4 mb-md-0{% endif %}{% if request.get_full_path == home_url %} no-border{% endif %}">
+  <li class="{% if horizontal %}nav-item{% endif %} menu__item">
+    <a class="{% if horizontal %}nav-link big hot{% endif %}" href="{% url 'arrivals' %}">
+      New Arrivals!
+    </a>
+  </li>
+  <!-- <li class="{% if horizontal %}nav-item{% endif %} menu__item">
+    <a class="{% if horizontal %}nav-link big{% endif %}" href="#">
+      Tendencias
+    </a>
+  </li>
+  <li class="{% if horizontal %}nav-item{% endif %} menu__item">
+    <a class="{% if horizontal %}nav-link big{% endif %}" href="#">
+      Marcas
+    </a>
+  </li> -->
+</ul>
+<ul class="menu {% if horizontal %}nav mb-4 mb-md-0{% endif %}{% if request.get_full_path == home_url %} no-border{% endif %}">
   {% for item in menu_items %}
   {% with children=item.get_children %}
     <li class="{% if horizontal %}nav-item{% endif %} {% if children %}nav-item__dropdown{% endif %} menu__item">

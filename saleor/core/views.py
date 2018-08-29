@@ -2,13 +2,17 @@ import json
 
 from django.contrib import messages
 from django.template.response import TemplateResponse
+from django.shortcuts import get_object_or_404
 from django.utils.translation import pgettext_lazy
 from impersonate.views import impersonate as orig_impersonate
 
 from ..account.models import User
 from ..dashboard.views import staff_member_required
-from ..product.utils import products_for_homepage
+from ..product.utils import (products_for_homepage, get_product_list_context,
+        products_with_details)
+from ..page.utils import pages_visible_to_user
 from ..product.utils.availability import products_with_availability
+from ..product.filters import SimpleFilter
 from ..seo.schema.webpage import get_webpage_schema
 
 
@@ -23,6 +27,19 @@ def home(request):
             'parent': None,
             'products': products,
             'webpage_schema': json.dumps(webpage_schema)})
+
+def arrivals(request):
+    products = products_with_details(user=request.user).order_by(
+        '-created_at')
+    product_filter = SimpleFilter(request.GET, queryset=products)
+    ctx = get_product_list_context(request, product_filter)
+    new_arrivals_page = get_object_or_404(
+        pages_visible_to_user(user=request.user).filter(
+            slug='new-arrivals'))
+    request.META['HTTP_PRODUCTS'] = ctx['products']
+    ctx.update({'page':new_arrivals_page})
+    return TemplateResponse(request, 'collection/arrivals.html', ctx)
+
 
 
 @staff_member_required

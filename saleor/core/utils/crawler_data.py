@@ -158,7 +158,8 @@ def create_product(item):
         'product_type': product_type,
         'brand': brand,
         'attributes': attributes,
-        'vendor_url': vendor_url
+        'vendor_url': vendor_url,
+        'created_at': timezone.now()
         }
     defaults.update(parsed_fields)
     return Product.objects.create(**defaults)

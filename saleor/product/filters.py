@@ -111,6 +111,6 @@ class ProductCollectionFilter(ProductFilter):
         return Q(product_variant_types__products__collections=self.collection)
 
 
-class SimilarProductsFilter(SortedFilterSet):
+class SimpleFilter(SortedFilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

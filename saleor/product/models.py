@@ -108,6 +108,7 @@ class Product(SeoModel):
     description = models.TextField()
     brand = models.TextField()
     vendor_url = models.TextField()
+    created_at = models.DateTimeField()
     category = models.ForeignKey(
         Category, related_name='products', on_delete=models.CASCADE)
     price = MoneyField(

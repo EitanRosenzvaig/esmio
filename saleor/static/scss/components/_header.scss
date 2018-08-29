@@ -22,10 +22,20 @@
         text-transform: uppercase;
         display: inline-block;
         padding: $global-padding * 0.4;
-        font-size: 1.04rem;
+        font-size: 0.9rem;
         &:hover {
           color: rgba($body-color, 0.6);
-
+        }
+        &.big {
+          font-size: 1.1rem;
+          padding-right: $global-padding * 0.8;
+          padding-left: $global-padding * 0.8;
+          &.hot {
+            color: red;
+            &:hover {
+              color: rgba(red, 0.6);
+            }
+          }
         }
       }
 
@@ -147,6 +157,14 @@
     svg {
       max-height: 23px;
       width: auto;
+    }
+  }
+  &__preheader {
+    padding: $global-padding / 3;
+    background-color: darkgrey;
+    &__text {
+      color: white;
+      font-weight: lighter;
     }
   }
   &__login {
