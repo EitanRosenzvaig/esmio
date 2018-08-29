@@ -163,9 +163,9 @@ class Product(SeoModel):
     def get_vendor_url(self):
         return self.vendor_url
 
-    def get_heart_url(self):
+    def get_bell_url(self):
         return reverse(
-            'product:heart',
+            'product:bell',
             kwargs={'slug': self.get_slug(), 'product_id': self.id})
 
     def get_similar(self):

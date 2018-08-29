@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.sitemaps import Sitemap
+from pdb import set_trace as bp
 
 from ..page.models import Page
 from ..product.models import Category, Collection, Product
@@ -40,5 +41,5 @@ class PageSitemap(I18nSitemap):
 sitemaps = {
     'categories': CategorySitemap,
     'collections': CollectionSitemap,
-    'products': ProductSitemap,
-    'pages': PageSitemap}
+    'products': ProductSitemap}
+    # 'pages': PageSitemap}

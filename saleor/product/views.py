@@ -94,7 +94,7 @@ def product_details(request, slug, product_id, form=None):
     return TemplateResponse(request, 'product/details.html', ctx)
 
 
-def product_heart(request, slug, product_id):
+def product_bell(request, slug, product_id):
 
     if not request.method == 'POST':
         return redirect(reverse(

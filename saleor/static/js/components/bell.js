@@ -1,5 +1,5 @@
-$('.fa-heart').on('click', (e) => {
-	let $heart_class = $(e.target).attr('class');
+$('.fa-bell').on('click', (e) => {
+	let $bell_class = $(e.target).attr('class');
 	let $product_pk = $(e.target).attr('data-pk');
 	let $url = $(e.target).attr('data-url');
   $.ajax({
@@ -10,7 +10,7 @@ $('.fa-heart').on('click', (e) => {
         pk: $product_pk
       },
       success: () => {
-        toggleHeart(e);
+        toggleBell(e);
       },
       error: (response) => {
         console.log(response);
@@ -24,14 +24,14 @@ export const hide_tooltips = () => {
   // $('[data-toggle="tooltip-filter"]').tooltip('hide');
 };
 
-$('.fa-heart').hover(
+$('.fa-bell').hover(
        function(){ $(this).addClass('fa-lg') },
        function(){ $(this).removeClass('fa-lg') }
 );
 
-export const toggleHeart = (e) => {
-  let $heart_class = $(e.target).attr('class');
-    if($heart_class.includes("far")){
+export const toggleBell = (e) => {
+  let $bell_class = $(e.target).attr('class');
+    if($bell_class.includes("far")){
     $(e.target).removeClass("far");
     $(e.target).addClass("fas");
   } else {
